@@ -9,8 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(src)
 
-option(BUILD_TESTS "Build gtests" OFF)
-if(${BUILD_TESTS})
-  enable_testing()
+include(CTest)
+if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
