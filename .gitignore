@@ -34,3 +34,4 @@
 # VS Code
 build/**
 .clangd/**
+.vscode/**
