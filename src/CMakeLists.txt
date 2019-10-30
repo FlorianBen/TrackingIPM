@@ -10,7 +10,7 @@ find_package(Boost REQUIRED)
 target_include_directories(
   SpaceCharge PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                      $<INSTALL_INTERFACE:include>)
-target_compile_features(SpaceCharge PUBLIC cxx_std_17)
+target_compile_features(SpaceCharge PUBLIC cxx_std_14)
 target_link_libraries(SpaceCharge PUBLIC GSL::gsl)
 target_link_libraries(SpaceCharge PUBLIC Boost::boost)
 
