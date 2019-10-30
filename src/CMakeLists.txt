@@ -1,4 +1,4 @@
-add_library(SpaceCharge SHARED "hello.cpp" "bunch.cpp")
+add_library(SpaceCharge SHARED "bunch.cpp" "particle.cpp")
 
 configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
                "${PROJECT_BINARY_DIR}/include/SpaceCharge/version.hpp")
@@ -22,9 +22,6 @@ install(
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-
-# install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/SpaceCharge
-# DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
