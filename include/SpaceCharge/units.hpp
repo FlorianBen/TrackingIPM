@@ -1,7 +1,7 @@
 #ifndef UNITS_HPP
 #define UNITS_HPP
 
-#include "SpaceCharge/definitions.hpp"
+#include "definitions.hpp"
 
 namespace SpaceCharge::uni {
 const double femto = 1e-15;
