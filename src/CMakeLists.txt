@@ -1,4 +1,4 @@
-add_library(SpaceCharge SHARED "bunch.cpp" "particle.cpp")
+add_library(SpaceCharge SHARED "bunch.cpp" "particle.cpp" "fields.cpp")
 
 configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
                "${PROJECT_BINARY_DIR}/include/SpaceCharge/version.hpp")
