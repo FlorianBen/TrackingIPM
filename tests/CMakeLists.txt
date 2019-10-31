@@ -13,4 +13,6 @@ macro(package_add_test TESTNAME)
     set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
-package_add_test(test1 test1.cpp)
+package_add_test(test_particle test_particle.cpp)
+package_add_test(test_bunch test_bunch.cpp)
+#package_add_test(test_particle test_particle.cpp)
