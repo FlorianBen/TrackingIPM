@@ -13,6 +13,7 @@ target_include_directories(
 target_compile_features(SpaceCharge PUBLIC cxx_std_14)
 target_link_libraries(SpaceCharge PUBLIC GSL::gsl)
 target_link_libraries(SpaceCharge PUBLIC Boost::boost)
+target_link_libraries(SpaceCharge PUBLIC Eigen3::Eigen)
 
 include(GNUInstallDirs)
 install(
