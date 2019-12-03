@@ -6,10 +6,36 @@
 namespace SpaceCharge {
 template <class T> class Field {
 private:
-    
+
 public:
-  Field(Bunch<T> bunch);
+  Field();
 };
+
+template <class T> class FieldBunch {
+private:
+  std::vector<Bunch<T>> bunches;
+
+public:
+  FieldBunch();
+};
+
+template <class T> class FieldCOMSOL {
+private:
+
+public:
+  FieldCOMSOL();
+};
+
+template <class T> class Fields {
+private:
+  std::vector<Field<T>> fields;
+
+public:
+  Fields();
+
+  void addField();
+};
+
 }; // namespace SpaceCharge
 
 #endif

@@ -15,4 +15,5 @@ endmacro()
 
 package_add_test(test_particle test_particle.cpp)
 package_add_test(test_bunch test_bunch.cpp)
+package_add_test(test_field test_field.cpp)
 #package_add_test(test_particle test_particle.cpp)
