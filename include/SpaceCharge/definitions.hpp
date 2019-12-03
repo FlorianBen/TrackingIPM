@@ -13,6 +13,7 @@ const double k = 1.380649e-23;
 const double Na = 6.02214076e23;
 const double R = Na * k;
 
+enum dir { x, y, z};
 enum lfactor { speed, beta, gamma, ec };
 const double hp = 6.62607015e-34;
 const double hpb = hp / (2 * pi);
@@ -22,9 +23,9 @@ const double mu0 = 4 * pi * 1e-7;
 const double eps0 = 1 / (mu0 * sol * sol);
 
 // TODO: Add some constant mass value
-const double mproton = 1.672649e-27;
-const double melectron = 9.109e-31;
-const double mneutron = 1.67493e-27;
+const double mproton = 1.672621898e-27;
+const double melectron = 9.10938356e-31;
+const double mneutron = 1.674927471e-27;
 } // namespace cst
 } // namespace SpaceCharge
 #endif
