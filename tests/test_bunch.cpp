@@ -8,15 +8,18 @@ class BunchTest : public ::testing::Test {
 protected:
   BunchTest()
       : part("proton", 1, SpaceCharge::cst::mproton,
-             SpaceCharge::cst::lfactor::beta, 0.5),
+             SpaceCharge::cst::lfactor::ec, 90e6*SpaceCharge::uni::p::eV),
         bunch(part, 62.5 * SpaceCharge::uni::milli,
-              1.0 / (352.0 * SpaceCharge::uni::mega)){};
-  void SetUp() override {}
+              1.0 / (352.0 * SpaceCharge::uni::mega),
+              SpaceCharge::cst::dir::z){};
+  void SetUp() override {
+
+  }
 
   // void TearDown() override {}
 
-  SpaceCharge::Particle<float> part;
-  SpaceCharge::Bunch<float> bunch;
+  SpaceCharge::Particle<double> part;
+  SpaceCharge::GaussianBunch<double> bunch;
 };
 
 TEST_F(BunchTest, BunchTiming) {
@@ -30,6 +33,13 @@ TEST_F(BunchTest, BuncheCharge) {
   auto ncharges = (0.0625 * 0.00286 / SpaceCharge::cst::e) /
                   (0.00286 * 352.0 * SpaceCharge::uni::mega);
   EXPECT_FLOAT_EQ(bunch.getNbParticles(), ncharges);
+}
+
+TEST_F(BunchTest, BuncheSigma) {
+  Eigen::Matrix<double, 3, 1> sigma;
+  sigma << 1.25e-3,1.25e-3,2.8e-3;
+  bunch.setSigma(sigma);
+  ASSERT_NEAR(bunch.getSigmaB()(3),0.003068579377427003,1e-9);
 }
 
 int main(int argc, char **argv) {
