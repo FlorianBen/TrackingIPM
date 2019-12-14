@@ -7,6 +7,8 @@ project(
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 add_subdirectory(src)
 
 include(CTest)
