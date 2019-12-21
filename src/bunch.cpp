@@ -215,6 +215,7 @@ template <class T> void GaussianBunch<T>::internalPotential() {
                         &error);
   V = result;
   error_V = error;
+  gsl_integration_workspace_free(work_ptr);
 }
 
 template <class T>
@@ -263,7 +264,7 @@ template <class T> void GaussianBunch<T>::internalField1() {
   }
   updateFields();
   gsl_integration_workspace_free(work_ptr);
-  //delete F;
+  // delete F;
 }
 
 template <class T>

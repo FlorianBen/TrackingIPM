@@ -96,9 +96,9 @@ public:
   void setPosition(Eigen::Matrix<T, 3, 1> pos);
   void setPosition(int index, T pos);
 
-  virtual T potentialAt(quadv quad) override;
-  virtual quadv EfieldAt(quadv quad) override;
-  virtual quadv MagfieldAt(quadv quad) override;
+  T potentialAt(quadv quad) override;
+  quadv EfieldAt(quadv quad) override;
+  quadv MagfieldAt(quadv quad) override;
 };
 
 template <class T> class FEMBunch : public Bunch<T> {};

@@ -2,6 +2,7 @@
 #define FIELDS_HPP
 
 #include "bunch.hpp"
+#include <memory>
 
 namespace SpaceCharge {
 template <class T> class Field {
@@ -20,13 +21,13 @@ public:
 template <class T> class FieldBunch : public Field<T> {
 private:
   typedef Eigen::Matrix<T, 4, 1> quadv;
-  //std::vector<Bunch<T>> bunches;
+  std::vector<std::unique_ptr<Bunch<T>>> bunches;
   bool use_periodicity;
 
 public:
   FieldBunch();
 
-  //void addBunch(Bunch<T> bunch);
+  void addBunch(std::unique_ptr<Bunch<T>> bunch);
   void usePeriodicity(bool use = true);
   virtual T potentialAt(quadv quad) override;
   virtual quadv EfieldAt(quadv quad) override;
@@ -46,7 +47,7 @@ private:
 public:
   Fields();
 
-  void addField(Field<T> field);
+  // void addField(Field<T> field);
 };
 
 }; // namespace SpaceCharge
