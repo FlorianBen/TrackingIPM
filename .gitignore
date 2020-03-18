@@ -35,3 +35,6 @@
 build/**
 .clangd/**
 .vscode/**
+
+# Temp
+proto/**
