@@ -23,6 +23,7 @@ private:
   typedef Eigen::Matrix<T, 4, 1> quadv;
   std::vector<std::unique_ptr<Bunch<T>>> bunches;
   bool use_periodicity;
+  T local_time;
 
 public:
   FieldBunch();

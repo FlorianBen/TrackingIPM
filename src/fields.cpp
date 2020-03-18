@@ -15,9 +15,9 @@ Field<T>::~Field(){
 
 template <class T>
 FieldBunch<T>::FieldBunch()
-    : use_periodicity(true){
+    : use_periodicity(true), local_time(.0){
 
-      };
+                             };
 
 template <class T>
 void FieldBunch<T>::addBunch(std::unique_ptr<Bunch<T>> bunch) {
@@ -31,25 +31,21 @@ template <class T> void FieldBunch<T>::usePeriodicity(bool use) {
 template <class T> T FieldBunch<T>::potentialAt(quadv quad) { return 0.0; };
 
 template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv quad) {
-  Eigen::Matrix<T, 4, 1> E;
+  quadv E;
+  quadv pos1, pos2, pos3;
   E << 0.0, 0.0, 0.0, 0.0;
   for (auto &bunch : bunches) {
     if (use_periodicity) {
-      auto tloc = (quad(0) / cst::sol) + bunch->getBunchPeriod();
-      auto nearest =
-          std::floor((tloc * 1e9) / (2 * bunch->getBunchPeriod() * 1e9));
-      if (nearest > 0) {
-        auto shift = 2.0 * nearest * bunch->getBunchPeriod();
-        auto shift2 = quad(0) / cst::sol - shift;
-        quad(0) = shift2 * cst::sol;
+      auto tloc = (quad(0) / cst::sol);
+      int rem = (int)std::floor(tloc / (bunch->getBunchPeriod()));
+      tloc = tloc - rem * (1 * bunch->getBunchPeriod());
+      if (tloc > (bunch->getBunchPeriod() / 2)) {
+        quad(0) = (tloc - bunch->getBunchPeriod()) * cst::sol;
       } else {
+        quad(0) = tloc * cst::sol;
       }
-      E += bunch->EfieldAt(quad);
-      quad(0) = quad(0) - bunch->getBunchPeriod() * cst::sol;
-      E += bunch->EfieldAt(quad);
-      quad(0) = quad(0) + bunch->getBunchPeriod() * cst::sol;
-      E += bunch->EfieldAt(quad);
 
+      E += bunch->EfieldAt(quad);
     } else {
       E += bunch->EfieldAt(quad);
     }
