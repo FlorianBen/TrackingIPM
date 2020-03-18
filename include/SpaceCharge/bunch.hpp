@@ -3,6 +3,7 @@
 
 #include <string>
 
+#undef Success
 #include <Eigen/Dense>
 
 #include <gsl/gsl_integration.h>
