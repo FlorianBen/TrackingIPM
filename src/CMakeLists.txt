@@ -6,14 +6,13 @@ configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
 find_package(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
+find_package(h5cpp REQUIRED)
 
 target_include_directories(
   SpaceCharge PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
                      $<INSTALL_INTERFACE:include>)
 target_compile_features(SpaceCharge PUBLIC cxx_std_14)
-target_link_libraries(SpaceCharge PUBLIC GSL::gsl)
-target_link_libraries(SpaceCharge PUBLIC Boost::boost)
-target_link_libraries(SpaceCharge PUBLIC Eigen3::Eigen)
+target_link_libraries(SpaceCharge GSL::gsl Eigen3::Eigen Boost::boost )
 
 include(GNUInstallDirs)
 install(
@@ -22,7 +21,8 @@ install(
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-  INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+  INCLUDES
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
