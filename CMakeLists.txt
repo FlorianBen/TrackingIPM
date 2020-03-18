@@ -3,7 +3,7 @@ project(
   SpaceCharge
   VERSION 0.1.0.0
   DESCRIPTION "Calculate Space Charge"
-  LANGUAGES CXX)
+  LANGUAGES CXX C)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
