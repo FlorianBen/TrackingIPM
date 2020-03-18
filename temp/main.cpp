@@ -2,19 +2,13 @@
 
 #include <tbb/parallel_for.h>
 
-#include <TApplication.h>
-#include <TCanvas.h>
-#include <TGraph.h>
+#include "field_h5.hpp"
+#include "vector.hpp"
 
-#include "SpaceCharge/bunch.hpp"
-#include "SpaceCharge/fields.hpp"
-#include "SpaceCharge/particle.hpp"
+bool save_data(Field &fieldv, std::vector<float> &time);
 
 int main(int argc, char *argv[]) {
   /* code */
-
-  auto app = new TApplication("TempApp", &argc, argv);
-
   SpaceCharge::Particle<double> part("proton", 1, SpaceCharge::cst::mproton,
                                      SpaceCharge::cst::lfactor::beta, 0.5);
 
@@ -22,8 +16,8 @@ int main(int argc, char *argv[]) {
                                       SpaceCharge::cst::melectron,
                                       SpaceCharge::cst::lfactor::beta, 0.8);
 
-  constexpr int nsize = 100;
-  constexpr int tsize = 2000;
+  constexpr int nsize = 400;
+  constexpr int tsize = 12000;
 
   auto step = 100.0e-3 / nsize;
   auto offset = -50e-3;
@@ -32,36 +26,28 @@ int main(int argc, char *argv[]) {
 
   float z[nsize], t[tsize];
   // float Ez[tsize][nsize];
+  std::vector<float> timev(tsize);
 
   float *z_buffer = new float[tsize * nsize];
 
+  Field fieldv(tsize*nsize);
+
   tbb::parallel_for(0, tsize, [&](int k) {
-    // for (auto k = 0; k < tsize; k++) {
     if (k % 100 == 0) {
       std::cout << k << "/" << tsize << std::endl;
     }
     auto tt = k * t_step;
     t[k] = tt;
+    timev.at(k) = tt;
     for (auto i = 0; i < nsize; i++) {
       SpaceCharge::FieldBunch<double> fields;
-
-      SpaceCharge::GaussianBunch<double> bunch(
-          part, 62.5 * SpaceCharge::uni::milli,
-          1.0 / (352.0 * SpaceCharge::uni::mega), SpaceCharge::cst::dir::z);
-
       std::unique_ptr<SpaceCharge::Bunch<double>> bunch2(
           new SpaceCharge::GaussianBunch<double>(
               part, 62.5 * SpaceCharge::uni::milli,
               1.0 / (352.0 * SpaceCharge::uni::mega),
               SpaceCharge::cst::dir::z));
 
-      std::unique_ptr<SpaceCharge::Bunch<double>> bunch3(
-          new SpaceCharge::GaussianBunch<double>(
-              part2, 30.5 * SpaceCharge::uni::milli,
-              1.0 / (352.0 * SpaceCharge::uni::mega),
-              SpaceCharge::cst::dir::z));
-
-      // fields.usePeriodicity(false);
+      fields.usePeriodicity(true);
 
       fields.addBunch(std::move(bunch2));
 
@@ -70,35 +56,38 @@ int main(int argc, char *argv[]) {
       pos(3) = i * step + offset;
       z[i] = i * step + offset;
 
-      // Ez[k][i] = (float)bunch.EfieldAt(pos)(3);
-      z_buffer[k * nsize + i] = (float)fields.EfieldAt(pos)(3);
+      Eigen::Matrix<double, 4, 1> temp = fields.EfieldAt(pos);
+
+      // fieldv.push_back(
+      FloatVector test;
+      test[0] = (float)temp(1);
+      test[1] = (float)temp(2);
+      test[2] = (float)temp(3);
+      fieldv[k * nsize + i] = test;
+      z_buffer[k * nsize + i] = (float)temp(3);
       ;
     }
   });
+  save_data(fieldv, timev);
 
-  auto c1 = new TCanvas("c1", "A Simple Graph Example", 200, 10, 1200, 800);
-
-  auto gr = new TGraph(nsize); //, z, z_buffer[0]);
-  gr->SetMaximum(90000);
-  gr->SetMinimum(-90000);
-  gr->SetTitle("Time t: 0.0");
-  gr->Draw("AC");
-
-  for (auto k = 0; k < tsize; k++) {
-    for (auto i = 0; i < nsize; i++) {
-      gr->SetPoint(i, z[i], z_buffer[k * nsize + i]);
-    }
-    std::stringstream stream;
-    stream << std::scientific << t[k];
-    std::string title = "Time t: ";
-    title = title + stream.str();
-    gr->SetTitle(title.c_str());
-    gr->SetMaximum(90000);
-    gr->SetMinimum(-90000);
-    c1->Modified();
-    c1->Update();
-  }
-  // app->Run();
   delete[] z_buffer;
   return 0;
+}
+
+bool save_data(Field &fieldv, std::vector<float> &time) {
+  using namespace hdf5;
+  file::File file = file::create("write_field.h5", file::AccessFlags::TRUNCATE);
+  node::Group root_group = file.root();
+  node::Group my_group = root_group.create_group("Scalar");
+  using data_type = std::vector<float>;
+  node::Dataset dataset = my_group.create_dataset(
+      "time", datatype::create<data_type>(), dataspace::create(time));
+  dataset.write(time);
+
+  VectorAppender field_appender(create_vector_dataset("Field", root_group),
+                                "field");
+
+  std::for_each(fieldv.begin(), fieldv.end(), field_appender);
+
+  return true;
 }
