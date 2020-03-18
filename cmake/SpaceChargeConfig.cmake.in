@@ -7,6 +7,7 @@ set(my-config-var @my-config-var@)
 find_dependency(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
+find_package(h5cpp REQUIRED)
 
 # Any extra setup
 
