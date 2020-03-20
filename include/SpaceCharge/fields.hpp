@@ -5,21 +5,79 @@
 #include <memory>
 
 namespace SpaceCharge {
+
+/**
+ * \class Field fields.hpp
+ * \brief Virutal class that represents an EM field.
+ **/
 template <class T> class Field {
 private:
+  /** Quadrivector time - position*/
   typedef Eigen::Matrix<T, 4, 1> quadv;
 
 public:
+  /**
+   * \brief Constructor.
+   * Pure virtual class.
+   **/
   Field();
   virtual ~Field();
 
-  virtual T potentialAt(quadv quad) = 0;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector.
+   * The derived class must implement this function.
+   **/
   virtual quadv EfieldAt(quadv quad) = 0;
+  /**
+   * \brief Calculate the Magnetic field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector.
+   * The derived class must implement this function.
+   **/
   virtual quadv MagfieldAt(quadv quad) = 0;
 };
 
+/**
+ * \class ConstantField fields.hpp
+ * \brief A class that represents a constant EM field.
+ **/
+template <class T> class ConstantField : public Field<T> {
+private:
+  /** Quadrivector time - position*/
+  typedef Eigen::Matrix<T, 4, 1> quadv;
+  quadv field;
+
+public:
+  ConstantField();
+  virtual ~ConstantField();
+
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector.
+   * The returned value is constant.
+   **/
+  virtual quadv EfieldAt(quadv quad) override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector.
+   * The returned value is constant.
+   **/
+  virtual quadv MagfieldAt(quadv quad) override;
+};
+
+/**
+ * \class FieldBunch fields.hpp
+ * \brief A class that represents an EM field created by particle bunches.
+ * Several bunch can be added. The resulting EM field is the sum of the
+ * contribution of each bunch.
+ **/
 template <class T> class FieldBunch : public Field<T> {
 private:
+  /** Quadrivector time - position*/
   typedef Eigen::Matrix<T, 4, 1> quadv;
   std::vector<std::unique_ptr<Bunch<T>>> bunches;
   bool use_periodicity;
@@ -28,19 +86,46 @@ private:
 public:
   FieldBunch();
 
+  /**
+   * \brief Add a bunch as source of EM field.
+   * \param[in] std::unique_ptr<Bunch<T>> Pointer to a bunch.
+   **/
   void addBunch(std::unique_ptr<Bunch<T>> bunch);
+  /**
+   * \brief Use the period of the bunch.
+   * \param[in] bool Use periodicity if True.
+   **/
   void usePeriodicity(bool use = true);
-  virtual T potentialAt(quadv quad) override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector.
+   **/
   virtual quadv EfieldAt(quadv quad) override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector.
+   **/
   virtual quadv MagfieldAt(quadv quad) override;
 };
 
+/**
+ * \class FieldCOMSOL fields.hpp
+ * \brief A class that represents an EM field from a COMSOL file.
+ **/
 template <class T> class FieldCOMSOL {
 private:
 public:
   FieldCOMSOL();
 };
 
+/**
+ * \class Fields fields.hpp
+ * \brief A class that represents an EM field created by several fields.
+ * The resulting EM field is the sum of the
+ * contribution of each field.
+ **/
 template <class T> class Fields {
 private:
   std::vector<Field<T>> fields;

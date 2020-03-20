@@ -9,7 +9,7 @@ namespace SpaceCharge {
 
 /**
  * \class Particle particle.hpp
- * \brief This class describes the particles that compose the bunche.
+ * \brief This class describes the particles that compose the bunch.
  *
  **/
 template <class T> class Particle {

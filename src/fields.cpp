@@ -28,8 +28,6 @@ template <class T> void FieldBunch<T>::usePeriodicity(bool use) {
   use_periodicity = use;
 };
 
-template <class T> T FieldBunch<T>::potentialAt(quadv quad) { return 0.0; };
-
 template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv quad) {
   quadv E;
   quadv pos1, pos2, pos3;
