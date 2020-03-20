@@ -1,6 +1,5 @@
 #pragma once
 
-#include "SpaceCharge/CImg.h"
 #include "SpaceCharge/bunch.hpp"
 #include "SpaceCharge/fields.hpp"
 #include "SpaceCharge/particle.hpp"
