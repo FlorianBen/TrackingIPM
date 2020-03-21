@@ -88,12 +88,12 @@ public:
 
   /**
    * \brief Add a bunch as source of EM field.
-   * \param[in] std::unique_ptr<Bunch<T>> Pointer to a bunch.
+   * \param[in] bunch Pointer to a bunch.
    **/
   void addBunch(std::unique_ptr<Bunch<T>> bunch);
   /**
    * \brief Use the period of the bunch.
-   * \param[in] bool Use periodicity if True.
+   * \param[in] use Use periodicity if True.
    **/
   void usePeriodicity(bool use = true);
   /**
