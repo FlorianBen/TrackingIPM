@@ -1,11 +1,12 @@
-#ifndef FIELDS_HPP
-#define FIELDS_HPP
+#pragma once
 
-#include "bunch.hpp"
 #include <memory>
 
-namespace SpaceCharge {
+#include "bunch.hpp"
+#include "nanoflann.hpp"
+#include "point_cloud.hpp"
 
+namespace SpaceCharge {
 /**
  * \class Field fields.hpp
  * \brief Virutal class that represents an EM field.
@@ -50,7 +51,7 @@ private:
   quadv field;
 
 public:
-  ConstantField();
+  ConstantField(quadv field);
   virtual ~ConstantField();
 
   /**
@@ -114,10 +115,49 @@ public:
  * \class FieldCOMSOL fields.hpp
  * \brief A class that represents an EM field from a COMSOL file.
  **/
-template <class T> class FieldCOMSOL {
+template <class T> class FieldCOMSOL : public Field<T> {
 private:
+  /** Quadrivector time - position*/
+  typedef Eigen::Matrix<T, 4, 1> quadv;
+  typedef nanoflann::KDTreeSingleIndexAdaptor<
+      nanoflann::L2_Simple_Adaptor<T, PointCloud<T>>, PointCloud<T>, 4 /* dim */
+      >
+      kd_tree_nanoflann;
+
+  PointCloud<T> pointcloud_posE;
+  PointCloud<T> fieldE;
+  kd_tree_nanoflann *index;
+
 public:
   FieldCOMSOL();
+  virtual ~FieldCOMSOL();
+
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector.
+   **/
+  virtual quadv EfieldAt(quadv quad) override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector.
+   **/
+  virtual quadv MagfieldAt(quadv quad) override;
+
+  size_t interpolateNN(const quadv pos, quadv &fieldv, size_t size = 7) const;
+  size_t interpolateNN2(const quadv pos, quadv &fieldv, size_t size = 7) const;
+
+  void interpolateRBF(const quadv pos, quadv &fieldv, const int nbNN,
+                      const float order,
+                      const std::function<T(const T, const T)> kernel) const;
+
+  void loadEfield(const std::string filename, const quadv offset,
+                  const double scale = 1.0);
+  void loadBfield(const std::string filename, const quadv offset,
+                  const double scale = 1.0);
+
+  void create_Eindex(const int leaf_size = 10);
 };
 
 /**
@@ -137,5 +177,3 @@ public:
 };
 
 }; // namespace SpaceCharge
-
-#endif
