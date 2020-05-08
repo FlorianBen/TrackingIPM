@@ -1,13 +1,12 @@
 include(CMakeFindDependencyMacro)
 
 # Capturing values from configure (optional)
-set(my-config-var @my-config-var@)
 
 # Same syntax as find_package
 find_dependency(GSL REQUIRED)
-find_package(Eigen3 REQUIRED)
-find_package(Boost REQUIRED)
-find_package(h5cpp REQUIRED)
+find_dependency(Eigen3 REQUIRED)
+find_dependency(Boost REQUIRED)
+find_dependency(h5cpp REQUIRED)
 
 # Any extra setup
 
