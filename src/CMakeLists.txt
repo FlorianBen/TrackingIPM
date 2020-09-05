@@ -1,4 +1,4 @@
-set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
+#set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
 
 add_library(
   SpaceCharge SHARED
@@ -22,7 +22,6 @@ configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
 find_package(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
-find_package(h5cpp REQUIRED)
 
 target_include_directories(
   SpaceCharge
@@ -30,7 +29,7 @@ target_include_directories(
   PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
          $<INSTALL_INTERFACE:include>)
 
-target_compile_features(SpaceCharge PUBLIC cxx_std_14)
+target_compile_features(SpaceCharge PUBLIC cxx_std_17)
 target_link_libraries(SpaceCharge GSL::gsl Eigen3::Eigen Boost::boost)
 
 include(GNUInstallDirs)

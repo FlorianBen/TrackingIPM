@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
     timev.at(k) = tt;
     for (auto i = 0; i < nsize; i++) {
       SpaceCharge::FieldBunch<double> fields;
+      SpaceCharge::FieldCOMSOL<double> fieldc;
       std::unique_ptr<SpaceCharge::Bunch<double>> bunch2(
           new SpaceCharge::GaussianBunch<double>(
               part, 62.5 * SpaceCharge::uni::milli,
@@ -65,7 +66,6 @@ int main(int argc, char *argv[]) {
       test[2] = (float)temp(3);
       fieldv[k * nsize + i] = test;
       z_buffer[k * nsize + i] = (float)temp(3);
-      ;
     }
   });
   save_data(fieldv, timev);

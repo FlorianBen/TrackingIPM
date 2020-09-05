@@ -9,8 +9,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-add_subdirectory(src)
+option(WITH_BOOST "enable Boost filesystem support" OFF)
+set(CONAN "DISABLE" CACHE STRING "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE")
+add_subdirectory(vendor/h5cpp)
 
+add_subdirectory(src)
 add_subdirectory(temp)
 
 include(CTest)
