@@ -1,3 +1,6 @@
 [submodule "vendor/googletest"]
 	path = vendor/googletest
 	url = https://github.com/google/googletest.git
+[submodule "vendor/h5cpp"]
+	path = vendor/h5cpp
+	url = https://github.com/ess-dmsc/h5cpp
