@@ -6,10 +6,8 @@ set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs/")
 set(DOXYGEN_BUILTIN_STL_SUPPORT TRUE)
 set(DOXYGEN_GENERATE_XML TRUE)
 
-
 doxygen_add_docs(libSpaceChargeDoc ${CMAKE_SOURCE_DIR}/include
                  "${CMAKE_SOURCE_DIR}/README.md")
-
 
 set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sphinx)
 set(SPHINX_INDEX_FILE ${SPHINX_BUILD}/index.html)
