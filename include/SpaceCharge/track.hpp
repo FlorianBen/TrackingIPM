@@ -2,33 +2,27 @@
 #define TRACK_HPP
 
 #include "particle.hpp"
+#include "point_cloud.hpp"
 
-namespace SpaceCharge {
+namespace SpaceCharge
+{
 
-  template <class T> 
+  template <class T>
   class Track
   {
   private:
     /* data */
     Particle<T> particle;
-    
+    T t0;
+    quadv<T> pos0;
+    quadv<T> v0;
 
+    std::vector<state_type> state;
 
   public:
-    Track(/* args */);
+    Track(Particle<T> particule, quadv);
     ~Track();
   };
-  
-  template <class T> 
-  Track<T>::Track(/* args */)
-  {
-  }
-  
-  template <class T> 
-  Track<T>::~Track()
-  {
-  }
-  
-}
+} // namespace SpaceCharge
 
 #endif

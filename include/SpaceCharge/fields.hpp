@@ -13,8 +13,6 @@ namespace SpaceCharge {
  **/
 template <class T> class Field {
 private:
-  /** Quadrivector time - position*/
-  typedef Eigen::Matrix<T, 4, 1> quadv;
 
 public:
   /**
@@ -30,14 +28,14 @@ public:
    * \return Electrical field vector.
    * The derived class must implement this function.
    **/
-  virtual quadv EfieldAt(quadv quad) = 0;
+  virtual quadv<T> EfieldAt(quadv<T> quad) = 0;
   /**
    * \brief Calculate the Magnetic field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    * The derived class must implement this function.
    **/
-  virtual quadv MagfieldAt(quadv quad) = 0;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) = 0;
 };
 
 /**
@@ -46,12 +44,10 @@ public:
  **/
 template <class T> class ConstantField : public Field<T> {
 private:
-  /** Quadrivector time - position*/
-  typedef Eigen::Matrix<T, 4, 1> quadv;
-  quadv field;
+  quadv<T> field;
 
 public:
-  ConstantField(quadv field);
+  ConstantField(quadv<T> field);
   virtual ~ConstantField();
 
   /**
@@ -60,14 +56,14 @@ public:
    * \return Electrical field vector.
    * The returned value is constant.
    **/
-  virtual quadv EfieldAt(quadv quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    * The returned value is constant.
    **/
-  virtual quadv MagfieldAt(quadv quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
 };
 
 /**
@@ -78,8 +74,6 @@ public:
  **/
 template <class T> class FieldBunch : public Field<T> {
 private:
-  /** Quadrivector time - position*/
-  typedef Eigen::Matrix<T, 4, 1> quadv;
   std::vector<std::unique_ptr<Bunch<T>>> bunches;
   bool use_periodicity;
   T local_time;
@@ -102,13 +96,13 @@ public:
    * \param[in] quad Time and space vector.
    * \return Electrical field vector.
    **/
-  virtual quadv EfieldAt(quadv quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    **/
-  virtual quadv MagfieldAt(quadv quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
 };
 
 /**
@@ -117,8 +111,6 @@ public:
  **/
 template <class T> class FieldCOMSOL : public Field<T> {
 private:
-  /** Quadrivector time - position*/
-  typedef Eigen::Matrix<T, 4, 1> quadv;
   typedef nanoflann::KDTreeSingleIndexAdaptor<
       nanoflann::L2_Simple_Adaptor<T, PointCloud<T>>, PointCloud<T>, 4 /* dim */
       >
@@ -137,24 +129,24 @@ public:
    * \param[in] quad Time and space vector.
    * \return Electrical field vector.
    **/
-  virtual quadv EfieldAt(quadv quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    **/
-  virtual quadv MagfieldAt(quadv quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
 
-  size_t interpolateNN(const quadv pos, quadv &fieldv, size_t size = 7) const;
-  size_t interpolateNN2(const quadv pos, quadv &fieldv, size_t size = 7) const;
+  size_t interpolateNN(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
+  size_t interpolateNN2(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
 
-  void interpolateRBF(const quadv pos, quadv &fieldv, const int nbNN,
+  void interpolateRBF(const quadv<T> pos, quadv<T> &fieldv, const int nbNN,
                       const float order,
                       const std::function<T(const T, const T)> kernel) const;
 
-  void loadEfield(const std::string filename, const quadv offset,
+  void loadEfield(const std::string filename, const quadv<T> offset,
                   const double scale = 1.0);
-  void loadBfield(const std::string filename, const quadv offset,
+  void loadBfield(const std::string filename, const quadv<T> offset,
                   const double scale = 1.0);
 
   void create_Eindex(const int leaf_size = 10);

@@ -5,6 +5,7 @@ set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
 set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs/")
 set(DOXYGEN_BUILTIN_STL_SUPPORT TRUE)
 set(DOXYGEN_GENERATE_XML TRUE)
+set(DOXYGEN_EXCLUDE_PATTERNS "nanoflann.hpp" "csv.hpp")
 
 doxygen_add_docs(libSpaceChargeDoc ${CMAKE_SOURCE_DIR}/include
                  "${CMAKE_SOURCE_DIR}/README.md")

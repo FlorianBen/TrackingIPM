@@ -1,20 +1,20 @@
-#set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
+# set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
 
-add_library(
-  SpaceCharge SHARED
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/bunch.hpp"
-  "bunch.cpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/particle.hpp"
-  "particle.cpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/fields.hpp"
-  "fields.cpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/boris.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/csv.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/definitions.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/nanoflann.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/point_cloud.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track.hpp"
-  "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
+set(SPACECHARGE_INC
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/bunch.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/particle.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/fields.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/boris.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/csv.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/definitions.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/nanoflann.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/point_cloud.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
+
+set(SPACECHARGE_SRC "bunch.cpp" "fields.cpp" "particle.cpp")
+
+add_library(SpaceCharge SHARED ${SPACECHARGE_INC} ${SPACECHARGE_SRC})
 
 configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
                "${PROJECT_BINARY_DIR}/include/SpaceCharge/version.hpp")

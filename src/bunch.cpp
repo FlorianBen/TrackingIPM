@@ -183,7 +183,7 @@ template <class T> void GaussianBunch<T>::updateFields() {
   this->B = (this->E_).transpose() * (b_transform);
 };
 
-template <class T> T GaussianBunch<T>::potentialAt(quadv quad) {
+template <class T> T GaussianBunch<T>::potentialAt(quadv<T> quad) {
   setPosition(quad);
   internalPotential();
   return V;
@@ -219,7 +219,7 @@ template <class T> void GaussianBunch<T>::internalPotential() {
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> GaussianBunch<T>::EfieldAt(quadv quad) {
+Eigen::Matrix<T, 4, 1> GaussianBunch<T>::EfieldAt(quadv<T> quad) {
   setPosition(quad);
   internalField1();
   return E;
@@ -268,7 +268,7 @@ template <class T> void GaussianBunch<T>::internalField1() {
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> GaussianBunch<T>::MagfieldAt(quadv quad) {
+Eigen::Matrix<T, 4, 1> GaussianBunch<T>::MagfieldAt(quadv<T> quad) {
 
   return quad;
 };

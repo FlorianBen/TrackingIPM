@@ -9,7 +9,6 @@ namespace SpaceCharge {
  * \brief This namespace contains the definitions of some pysical constants.
  **/
 namespace cst {
-  // TODO: Put unit for Doxygen
 //! Definition of \f$\pi\f$ as constexpr
 constexpr double pi = boost::math::constants::pi<double>();
 //! Gravitational acceleration

@@ -7,6 +7,9 @@
 
 namespace SpaceCharge {
 
+template<typename T>
+using quadv = Eigen::Matrix<T, 4, 1>;
+
 template <class T>
 T distanceFrom(const Eigen::Matrix<T, 4, 1> &p1,
                const Eigen::Matrix<T, 4, 1> &p2) {
@@ -55,9 +58,7 @@ template <class T> struct PointCloud {
    * @brief Adaptator class between nanoflann and point_type.
    */
 
-  typedef Eigen::Matrix<T, 4, 1> quadv;
-
-  std::vector<quadv> pts;
+  std::vector<quadv<T>> pts;
 
   // Must return the number of data points
   inline size_t kdtree_get_point_count() const { return pts.size(); }
