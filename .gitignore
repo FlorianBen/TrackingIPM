@@ -38,3 +38,5 @@ build/**
 
 # Temp
 proto/**
+temp/**
+*.h5
