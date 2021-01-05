@@ -1,4 +1,5 @@
-#pragma once
+#ifndef POINT_CLOUD_HPP
+#define POINT_CLOUD_HPP
 
 #undef Success
 #include <Eigen/Dense>

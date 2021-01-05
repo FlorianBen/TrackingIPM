@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FIELDS_HPP
+#define FIELDS_HPP
 
 #include <memory>
 
@@ -169,3 +170,5 @@ public:
 };
 
 }; // namespace SpaceCharge
+
+#endif
