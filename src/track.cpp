@@ -1,5 +1,7 @@
 #include <boost/numeric/odeint.hpp>
+#include <thread>
 
+#include "SpaceCharge/blosc_filter.h"
 #include "SpaceCharge/definitions.hpp"
 #include "SpaceCharge/track.hpp"
 #include "SpaceCharge/track_h5.hpp"
@@ -42,17 +44,23 @@ template <class T> void Track<T>::track() {
 
 template <class T> void Track<T>::save(std::filesystem::path file) {
   using namespace hdf5;
-  file::File f = file::create(file, file::AccessFlags::TRUNCATE);
-  node::Group root_group = f.root();
-  node::Dataset dataset(root_group, "time", datatype::create<std::vector<T>>(),
-                        dataspace::create(times));
-  dataset.write(times);
 
-  auto type = datatype::create<SpaceCharge::quadv<T>>();
   hdf5::property::LinkCreationList lcpl;
   hdf5::property::DatasetCreationList dcpl;
   dcpl.layout(hdf5::property::DatasetLayout::CHUNKED);
   dcpl.chunk(hdf5::Dimensions{256});
+  auto filter = std::make_unique<hdf5::filter::Deflate>(8u);
+  filter->operator()(dcpl);
+
+  file::File f = file::create(file, file::AccessFlags::TRUNCATE);
+  node::Group root_group = f.root();
+  node::Dataset dataset(root_group, "time", datatype::create<std::vector<T>>(),
+                        dataspace::create(times), lcpl, dcpl);
+
+  dataset.write(times);
+
+  auto type = datatype::create<SpaceCharge::quadv<T>>();
+
   hdf5::dataspace::Simple dataspace({0}, {hdf5::dataspace::Simple::UNLIMITED});
   auto temp =
       hdf5::node::Dataset(root_group, "positions", type, dataspace, lcpl, dcpl);

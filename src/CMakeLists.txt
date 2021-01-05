@@ -1,6 +1,7 @@
 # set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
 
 set(SPACECHARGE_INC
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/blosc_filter.h"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/bunch.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/particle.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/fields.hpp"
@@ -13,7 +14,8 @@ set(SPACECHARGE_INC
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
 
-set(SPACECHARGE_SRC "bunch.cpp" "fields.cpp" "particle.cpp" "track.cpp")
+set(SPACECHARGE_SRC "bunch.cpp" "fields.cpp" "particle.cpp" "track.cpp"
+                    "blosc_filter.c")
 
 add_library(SpaceCharge SHARED ${SPACECHARGE_INC} ${SPACECHARGE_SRC})
 
@@ -23,6 +25,7 @@ configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/version.hpp.in"
 find_package(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
+find_package(Blosc REQUIRED)
 
 target_include_directories(
   SpaceCharge
@@ -31,7 +34,7 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>)
 
 target_compile_features(SpaceCharge PUBLIC cxx_std_17)
-target_link_libraries(SpaceCharge h5cpp GSL::gsl Eigen3::Eigen Boost::boost)
+target_link_libraries(SpaceCharge ${BLOSC_LIBRARIES} h5cpp GSL::gsl Eigen3::Eigen Boost::boost)
 
 include(GNUInstallDirs)
 install(
