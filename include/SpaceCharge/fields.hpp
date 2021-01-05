@@ -29,14 +29,14 @@ public:
    * \return Electrical field vector.
    * The derived class must implement this function.
    **/
-  virtual quadv<T> EfieldAt(quadv<T> quad) = 0;
+  virtual quadv<T> EfieldAt(quadv<T> quad) const = 0;
   /**
    * \brief Calculate the Magnetic field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    * The derived class must implement this function.
    **/
-  virtual quadv<T> MagfieldAt(quadv<T> quad) = 0;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) const = 0;
 };
 
 /**
@@ -57,14 +57,14 @@ public:
    * \return Electrical field vector.
    * The returned value is constant.
    **/
-  virtual quadv<T> EfieldAt(quadv<T> quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) const override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    * The returned value is constant.
    **/
-  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 };
 
 /**
@@ -97,13 +97,13 @@ public:
    * \param[in] quad Time and space vector.
    * \return Electrical field vector.
    **/
-  virtual quadv<T> EfieldAt(quadv<T> quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) const override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    **/
-  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 };
 
 /**
@@ -130,13 +130,13 @@ public:
    * \param[in] quad Time and space vector.
    * \return Electrical field vector.
    **/
-  virtual quadv<T> EfieldAt(quadv<T> quad) override;
+  virtual quadv<T> EfieldAt(quadv<T> quad) const override;
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.
    * \return Magnetic field vector.
    **/
-  virtual quadv<T> MagfieldAt(quadv<T> quad) override;
+  virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 
   size_t interpolateNN(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
   size_t interpolateNN2(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
@@ -166,7 +166,7 @@ private:
 public:
   Fields();
 
-  // void addField(Field<T> field);
+  void addField(Field<T> field);
 };
 
 }; // namespace SpaceCharge

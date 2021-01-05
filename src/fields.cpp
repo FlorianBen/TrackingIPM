@@ -1,7 +1,6 @@
-#include "SpaceCharge/fields.hpp"
-
 #include <iostream>
 
+#include "SpaceCharge/fields.hpp"
 #include "SpaceCharge/csv.hpp"
 
 namespace SpaceCharge {
@@ -21,7 +20,7 @@ template <class T> void FieldBunch<T>::usePeriodicity(bool use) {
   use_periodicity = use;
 }
 
-template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) {
+template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
   quadv<T> E;
   quadv<T> pos1;
   quadv<T> pos2;
@@ -48,7 +47,7 @@ template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad)
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldBunch<T>::MagfieldAt(quadv<T> quad) {
+Eigen::Matrix<T, 4, 1> FieldBunch<T>::MagfieldAt(quadv<T> quad) const {
 
   return quad;
 }
@@ -57,12 +56,12 @@ template <class T> FieldCOMSOL<T>::FieldCOMSOL() {}
 
 template <class T> FieldCOMSOL<T>::~FieldCOMSOL() {}
 
-template <class T> Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) {
+template <class T> Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
   return quad;
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) {
+Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) const {
   return quad;
 }
 
