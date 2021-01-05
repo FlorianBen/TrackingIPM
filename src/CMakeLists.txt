@@ -10,9 +10,10 @@ set(SPACECHARGE_INC
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/nanoflann.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/point_cloud.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
 
-set(SPACECHARGE_SRC "bunch.cpp" "fields.cpp" "particle.cpp")
+set(SPACECHARGE_SRC "bunch.cpp" "fields.cpp" "particle.cpp" "track.cpp")
 
 add_library(SpaceCharge SHARED ${SPACECHARGE_INC} ${SPACECHARGE_SRC})
 
@@ -30,7 +31,7 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>)
 
 target_compile_features(SpaceCharge PUBLIC cxx_std_17)
-target_link_libraries(SpaceCharge GSL::gsl Eigen3::Eigen Boost::boost)
+target_link_libraries(SpaceCharge h5cpp GSL::gsl Eigen3::Eigen Boost::boost)
 
 include(GNUInstallDirs)
 install(
