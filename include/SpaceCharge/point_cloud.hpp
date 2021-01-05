@@ -1,15 +1,18 @@
 #ifndef POINT_CLOUD_HPP
 #define POINT_CLOUD_HPP
 
-#undef Success
+#undef Success // Conflit entre les libs 
 #include <Eigen/Dense>
 
 #include <iostream>
 
 namespace SpaceCharge {
 
-template<typename T>
-using quadv = Eigen::Matrix<T, 4, 1>;
+template <typename T> using quadv = Eigen::Matrix<T, 4, 1>;
+
+template <typename T> using state_type2 = std::vector<Eigen::Matrix<T, 4, 1>>;
+
+typedef std::vector<Eigen::Matrix<double, 4, 1>> state_type;
 
 template <class T>
 T distanceFrom(const Eigen::Matrix<T, 4, 1> &p1,
@@ -101,6 +104,6 @@ template <class T> struct PointCloud {
   }
 };
 
-typedef std::vector<Eigen::Matrix<double, 4, 1>> state_type;
-
 }; // namespace SpaceCharge
+
+#endif
