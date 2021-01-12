@@ -8,13 +8,13 @@
 #include "point_cloud.hpp"
 
 namespace SpaceCharge {
+
 /**
  * \class Field fields.hpp
  * \brief Virutal class that represents an EM field.
  **/
 template <class T> class Field {
 private:
-
 public:
   /**
    * \brief Constructor.
@@ -138,8 +138,10 @@ public:
    **/
   virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 
-  size_t interpolateNN(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
-  size_t interpolateNN2(const quadv<T> pos, quadv<T> &fieldv, size_t size = 7) const;
+  size_t interpolateNN(const quadv<T> pos, quadv<T> &fieldv,
+                       size_t size = 7) const;
+  size_t interpolateNN2(const quadv<T> pos, quadv<T> &fieldv,
+                        size_t size = 7) const;
 
   void interpolateRBF(const quadv<T> pos, quadv<T> &fieldv, const int nbNN,
                       const float order,
@@ -159,15 +161,40 @@ public:
  * The resulting EM field is the sum of the
  * contribution of each field.
  **/
-template <class T> class Fields {
+template <class T> class EMFieldsManager : public Field {
 private:
   std::vector<Field<T>> fields;
 
 public:
-  Fields();
+  EMFieldsManager();
 
+  /**
+   * \brief Add a field to the fields manager.
+   * \param[in] field Fiel to add.
+   */
   void addField(Field<T> field);
+
+  /**
+   * \brief Remove the field n.
+   * \param[in] index Index.
+   */
+  void removeField(std::size_t index);
+
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector.
+   **/
+  virtual quadv<T> EfieldAt(quadv<T> quad) const override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector.
+   **/
+  virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 };
+
+template <typename T> using FieldSP = std::unique_ptr<Field<T>>;
 
 }; // namespace SpaceCharge
 

@@ -22,7 +22,7 @@ template <class T> void Track<T>::track() {
                      const double t) {
     quadv<T> Efield, Bfield;
     Efield << 0.0, 3.0e5, 0.0e5, 0.0;
-    Bfield << 0.0, 0.0e5, 0.0e5, 0.0;
+    Bfield << 0.0, 1.0, 0.0e5, 0.0;
 
     dxdt[0] = x[1];
     dxdt[1] =

@@ -3,8 +3,9 @@
 
 #include <filesystem>
 
-#include "particle.hpp"
-#include "point_cloud.hpp"
+#include "SpaceCharge/fields.hpp"
+#include "SpaceCharge/particle.hpp"
+#include "SpaceCharge/point_cloud.hpp"
 
 namespace SpaceCharge {
 
@@ -18,6 +19,8 @@ private:
 
   std::vector<state_type2<T>> states;
   std::vector<T> times;
+
+  FieldSP<T> fieldmanager;
 
 public:
   Track(Particle<T> part, quadv<T> pos0, quadv<T> v0);
