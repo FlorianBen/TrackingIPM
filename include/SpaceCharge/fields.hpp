@@ -39,6 +39,9 @@ public:
   virtual quadv<T> MagfieldAt(quadv<T> quad) const = 0;
 };
 
+template <typename T> using FieldSP = std::unique_ptr<Field<T>>;
+template <typename T> using FieldSPS = std::shared_ptr<Field<T>>;
+
 /**
  * \class ConstantField fields.hpp
  * \brief A class that represents a constant EM field.
@@ -163,7 +166,7 @@ public:
  **/
 template <class T> class EMFieldsManager : public Field {
 private:
-  std::vector<Field<T>> fields;
+  std::vector<FieldSP<T>> Efields;
 
 public:
   EMFieldsManager();
@@ -172,7 +175,7 @@ public:
    * \brief Add a field to the fields manager.
    * \param[in] field Fiel to add.
    */
-  void addField(Field<T> field);
+  void addField(FieldSP<T> &field);
 
   /**
    * \brief Remove the field n.
@@ -193,8 +196,6 @@ public:
    **/
   virtual quadv<T> MagfieldAt(quadv<T> quad) const override;
 };
-
-template <typename T> using FieldSP = std::unique_ptr<Field<T>>;
 
 }; // namespace SpaceCharge
 
