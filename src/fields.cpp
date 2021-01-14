@@ -10,6 +10,18 @@ template <class T> Field<T>::Field() {}
 template <class T> Field<T>::~Field() {}
 
 template <class T>
+ConstantField<T>::ConstantField(quadv<T> field) : field(field) {}
+
+template <class T> quadv<T> ConstantField<T>::EfieldAt(quadv<T> quad) const {
+  return field;
+}
+
+template <class T> quadv<T> ConstantField<T>::MagfieldAt(quadv<T> quad) const {
+  quadv<T> B;
+  B << 0.0, 0.0, 0.0, 0.0;
+  return B;
+}
+template <class T>
 FieldBunch<T>::FieldBunch() : use_periodicity(true), local_time(.0) {}
 
 template <class T>
