@@ -203,9 +203,15 @@ quadv<T> EMFieldsManager<T>::MagfieldAt(quadv<T> quad) const {
   B << 0.0, 0.0, 0.0, 0.0;
   return B;
 }
+
 template class Field<double>;
+template class Field<float>;
+template class ConstantField<double>;
+template class ConstantField<float>;
 template class FieldBunch<double>;
 template class FieldCOMSOL<double>;
 template class FieldCOMSOL<float>;
+template class EMFieldsManager<double>;
+template class EMFieldsManager<float>;
 
 }; // namespace SpaceCharge
