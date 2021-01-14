@@ -166,7 +166,7 @@ public:
  * The resulting EM field is the sum of the
  * contribution of each field.
  **/
-template <class T> class EMFieldsManager : public Field {
+template <class T> class EMFieldsManager : public Field<T> {
 private:
   std::vector<FieldSP<T>> Efields;
 

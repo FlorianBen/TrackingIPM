@@ -180,6 +180,29 @@ void FieldCOMSOL<T>::interpolateRBF(
   fieldv(3) = Fiz;
 }
 
+template <class T> EMFieldsManager<T>::EMFieldsManager() {
+  // TODO: Implement
+}
+
+template <class T> void EMFieldsManager<T>::addField(FieldSP<T> &field) {
+  Efields.push_back(std::move(field));
+}
+
+template <class T> quadv<T> EMFieldsManager<T>::EfieldAt(quadv<T> quad) const {
+  quadv<T> E;
+  E << 0.0, 0.0, 0.0, 0.0;
+  for (auto &field : Efields) {
+    E += field->EfieldAt(quad);
+  }
+  return E;
+}
+
+template <class T>
+quadv<T> EMFieldsManager<T>::MagfieldAt(quadv<T> quad) const {
+  quadv<T> B;
+  B << 0.0, 0.0, 0.0, 0.0;
+  return B;
+}
 template class Field<double>;
 template class FieldBunch<double>;
 template class FieldCOMSOL<double>;
