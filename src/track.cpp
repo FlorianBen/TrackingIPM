@@ -10,11 +10,13 @@
 namespace SpaceCharge {
 
 template <class T>
-Track<T>::Track(Particle<T> part, quadv<T> pos0, quadv<T> v0)
-    : particle(part), pos0{pos0}, v0{v0} {}
+Track<T>::Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,
+                FieldSPS<T> &fieldmanager)
+    : particle(part), pos0{pos0}, v0{v0}, fieldmanager(fieldmanager) {}
 
 template <class T> void Track<T>::track() {
   using namespace boost::numeric::odeint;
+  SC_INFO("Track: Start tracking");
   state_type2<T> init{pos0, v0};
   runge_kutta4<state_type2<T>> stepper;
 
@@ -22,8 +24,8 @@ template <class T> void Track<T>::track() {
   auto lorentz = [&](const state_type2<T> &x, state_type2<T> &dxdt,
                      const double t) {
     quadv<T> Efield, Bfield;
-    Efield << 0.0, 3.0e5, 0.0e5, 0.0;
-    Bfield << 0.0, 1.0, 0.0e5, 0.0;
+    Efield = this->fieldmanager->EfieldAt(x[0]); //<< 0.0, 3.0e5, 0.0e5, 0.0;
+    Bfield = this->fieldmanager->MagfieldAt(x[0]);
 
     dxdt[0] = x[1];
     dxdt[1] =

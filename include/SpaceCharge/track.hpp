@@ -20,10 +20,10 @@ private:
   std::vector<state_type2<T>> states;
   std::vector<T> times;
 
-  FieldSP<T> fieldmanager;
+  FieldSPS<T> fieldmanager;
 
 public:
-  Track(Particle<T> part, quadv<T> pos0, quadv<T> v0);
+  Track(Particle<T> part, quadv<T> pos0, quadv<T> v0, FieldSPS<T> &fieldmanager);
 
   void track();
 
