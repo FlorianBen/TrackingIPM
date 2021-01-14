@@ -269,8 +269,8 @@ template <class T> void GaussianBunch<T>::internalField1() {
 
 template <class T>
 Eigen::Matrix<T, 4, 1> GaussianBunch<T>::MagfieldAt(quadv<T> quad) {
-
-  return quad;
+  
+  return B;
 };
 
 template class Bunch<double>;

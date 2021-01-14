@@ -21,6 +21,7 @@ template <class T> quadv<T> ConstantField<T>::MagfieldAt(quadv<T> quad) const {
   B << 0.0, 0.0, 0.0, 0.0;
   return B;
 }
+
 template <class T>
 FieldBunch<T>::FieldBunch() : use_periodicity(true), local_time(.0) {}
 
@@ -33,11 +34,9 @@ template <class T> void FieldBunch<T>::usePeriodicity(bool use) {
   use_periodicity = use;
 }
 
-template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
+template <class T>
+Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
   quadv<T> E;
-  quadv<T> pos1;
-  quadv<T> pos2;
-  quadv<T> pos3;
   E << 0.0, 0.0, 0.0, 0.0;
   for (auto &bunch : bunches) {
     if (use_periodicity) {
@@ -55,14 +54,14 @@ template <class T> Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad)
       E += bunch->EfieldAt(quad);
     }
   }
-
   return E;
 }
 
 template <class T>
 Eigen::Matrix<T, 4, 1> FieldBunch<T>::MagfieldAt(quadv<T> quad) const {
-
-  return quad;
+  quadv<T> B;
+  B << 0.0, 0.0, 0.0, 0.0;
+  return B;
 }
 
 template <class T> FieldCOMSOL<T>::FieldCOMSOL() {}
