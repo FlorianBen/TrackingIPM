@@ -1,7 +1,8 @@
 #include <iostream>
 
-#include "SpaceCharge/fields.hpp"
+#include "SpaceCharge/alogger.hpp"
 #include "SpaceCharge/csv.hpp"
+#include "SpaceCharge/fields.hpp"
 
 namespace SpaceCharge {
 template <class T> Field<T>::Field() {}
