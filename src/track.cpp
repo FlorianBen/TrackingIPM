@@ -1,6 +1,7 @@
 #include <boost/numeric/odeint.hpp>
 #include <thread>
 
+#include "SpaceCharge/alogger.hpp"
 #include "SpaceCharge/blosc_filter.h"
 #include "SpaceCharge/definitions.hpp"
 #include "SpaceCharge/track.hpp"
@@ -39,12 +40,13 @@ template <class T> void Track<T>::track() {
   };
 
   // Solve ODE
-  integrate_const(stepper, lorentz, init, 0.0, 200e-9, 0.1e-9, observer);
+  integrate_const(stepper, lorentz, init, 0.0, 3e-9, 0.001e-9, observer);
+  SC_INFO("Track: End tracking");
 }
 
 template <class T> void Track<T>::save(std::filesystem::path file) {
   using namespace hdf5;
-
+  SC_INFO("Track: Saving");
   hdf5::property::LinkCreationList lcpl;
   hdf5::property::DatasetCreationList dcpl;
   dcpl.layout(hdf5::property::DatasetLayout::CHUNKED);
@@ -68,6 +70,7 @@ template <class T> void Track<T>::save(std::filesystem::path file) {
   for (auto state : states) {
     positions_appender(state[0]);
   }
+  SC_INFO("Track: Data saved in {}", file.u8string());
 }
 
 } // namespace SpaceCharge

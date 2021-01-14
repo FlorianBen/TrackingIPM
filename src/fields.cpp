@@ -66,8 +66,9 @@ Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-void FieldCOMSOL<T>::loadEfield(const std::string filename, const quadv<T> offset,
-                                const double scale) {
+void FieldCOMSOL<T>::loadEfield(const std::string filename,
+                                const quadv<T> offset, const double scale, const int leaf_size) {
+  SC_INFO("FieldCOMSOL: Load file {}", filename);                                  
   constexpr auto ncols = 6;
   io::CSVReader<ncols> in(filename);
   quadv<T> tmp_pos;
@@ -80,12 +81,15 @@ void FieldCOMSOL<T>::loadEfield(const std::string filename, const quadv<T> offse
     pointcloud_posE.pts.push_back(tmp_pos);
     fieldE.pts.push_back(tmp_val * scale);
   }
+  SC_INFO("FieldCOMSOL: File loaded");                                  
+  create_Eindex(leaf_size);
 }
 
 template <class T> void FieldCOMSOL<T>::create_Eindex(const int leaf_size) {
   index = new kd_tree_nanoflann(
       3, pointcloud_posE, nanoflann::KDTreeSingleIndexAdaptorParams(leaf_size));
   index->buildIndex();
+  SC_INFO("FieldCOMSOL: Index created");                                  
 }
 
 template <class T>
