@@ -52,7 +52,6 @@ private:
 
 public:
   ConstantField(quadv<T> field);
-  virtual ~ConstantField();
 
   /**
    * \brief Calculate the Electrical field at the given time and space.
@@ -124,6 +123,8 @@ private:
   PointCloud<T> fieldE;
   kd_tree_nanoflann *index;
 
+  static T kernel_exp(T distance, T n) { return exp(-pow(n * distance, 2)); }
+
 public:
   FieldCOMSOL();
   virtual ~FieldCOMSOL();
@@ -151,11 +152,12 @@ public:
                       const std::function<T(const T, const T)> kernel) const;
 
   void loadEfield(const std::string filename, const quadv<T> offset,
-                  const double scale = 1.0);
+                  const double scale = 1.0, const int leaf_size = 20);
   void loadBfield(const std::string filename, const quadv<T> offset,
-                  const double scale = 1.0);
+                  const double scale = 1.0, const int leaf_size = 20);
 
-  void create_Eindex(const int leaf_size = 10);
+  void create_Eindex(const int leaf_size = 20);
+  void create_Bindex(const int leaf_size = 20);
 };
 
 /**
@@ -189,6 +191,7 @@ public:
    * \return Electrical field vector.
    **/
   virtual quadv<T> EfieldAt(quadv<T> quad) const override;
+
   /**
    * \brief Calculate the Electrical field at the given time and space.
    * \param[in] quad Time and space vector.

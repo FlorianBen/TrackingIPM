@@ -56,13 +56,19 @@ template <class T> FieldCOMSOL<T>::FieldCOMSOL() {}
 
 template <class T> FieldCOMSOL<T>::~FieldCOMSOL() {}
 
-template <class T> Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
-  return quad;
+template <class T>
+Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
+  quadv<T> E;
+  E << 0.0, 0.0, 0.0, 0.0;
+  interpolateRBF(quad, E, 7, 1.0, kernel_exp);
+  return E;
 }
 
 template <class T>
 Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) const {
-  return quad;
+  quadv<T> B;
+  B << 0.0, 0.0, 0.0, 0.0;
+  return B;
 }
 
 template <class T>
