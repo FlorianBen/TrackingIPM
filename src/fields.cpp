@@ -37,7 +37,7 @@ template <class T> void FieldBunch<T>::usePeriodicity(bool use) {
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
+quadv<T> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
   quadv<T> E;
   E << 0.0, 0.0, 0.0, 0.0;
   for (auto &bunch : bunches) {
@@ -60,7 +60,7 @@ Eigen::Matrix<T, 4, 1> FieldBunch<T>::EfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldBunch<T>::MagfieldAt(quadv<T> quad) const {
+quadv<T> FieldBunch<T>::MagfieldAt(quadv<T> quad) const {
   quadv<T> B;
   B << 0.0, 0.0, 0.0, 0.0;
   return B;
@@ -71,7 +71,7 @@ template <class T> FieldCOMSOL<T>::FieldCOMSOL() {}
 template <class T> FieldCOMSOL<T>::~FieldCOMSOL() {}
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
+quadv<T> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
   quadv<T> E;
   E << 0.0, 0.0, 0.0, 0.0;
   interpolateRBF(quad, E, 7, 1.0, kernel_exp);
@@ -79,7 +79,7 @@ Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::EfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) const {
+quadv<T> FieldCOMSOL<T>::MagfieldAt(quadv<T> quad) const {
   quadv<T> B;
   B << 0.0, 0.0, 0.0, 0.0;
   return B;
@@ -154,7 +154,7 @@ void FieldCOMSOL<T>::interpolateRBF(
 
   for (auto i = 0; i < nb_result; i++) {
     for (auto j = 0; j < nb_result; j++) {
-      matW(i, j) = kernel(distanceFrom(pointcloud_posE.pts[ret_index[i]],
+      matW(i, j) = kernel(distanceFrom<T>(pointcloud_posE.pts[ret_index[i]],
                                        pointcloud_posE.pts[ret_index[j]]),
                           order);
     }
@@ -171,7 +171,7 @@ void FieldCOMSOL<T>::interpolateRBF(
   Wkz = matW.colPivHouseholderQr().solve(Fkz);
   T Fix = .0, Fiy = .0, Fiz = .0;
   for (auto ind = 0; ind < ret_index.size(); ind++) {
-    auto distance = distanceFrom(pos, pointcloud_posE.pts[ret_index[ind]]);
+    auto distance = distanceFrom<T>(pos, pointcloud_posE.pts[ret_index[ind]]);
     Fix = Fix + kernel(distance, order) * Wkx(ind);
     Fiy = Fiy + kernel(distance, order) * Wky(ind);
     Fiz = Fiz + kernel(distance, order) * Wkz(ind);

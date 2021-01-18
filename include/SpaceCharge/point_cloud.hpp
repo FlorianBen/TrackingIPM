@@ -1,7 +1,7 @@
 #ifndef POINT_CLOUD_HPP
 #define POINT_CLOUD_HPP
 
-#undef Success // Conflit entre les libs 
+#undef Success // Conflit entre les libs
 #include <Eigen/Dense>
 
 #include <iostream>
@@ -10,13 +10,9 @@ namespace SpaceCharge {
 
 template <typename T> using quadv = Eigen::Matrix<T, 4, 1>;
 
-template <typename T> using state_type2 = std::vector<Eigen::Matrix<T, 4, 1>>;
+template <typename T> using state_type2 = std::vector<quadv<T>>;
 
-typedef std::vector<Eigen::Matrix<double, 4, 1>> state_type;
-
-template <class T>
-T distanceFrom(const Eigen::Matrix<T, 4, 1> &p1,
-               const Eigen::Matrix<T, 4, 1> &p2) {
+template <class T> T distanceFrom(const quadv<T> &p1, const quadv<T> &p2) {
   T distsqr = 0;
   for (size_t i = 1; i < 4; ++i) {
     distsqr = distsqr + pow((p1(i) - p2(i)), 2);
@@ -30,9 +26,7 @@ T distanceFrom(const Eigen::Matrix<T, 4, 1> &p1,
  * @param[in] p2
  * @return The result of dot product.
  */
-template <class T>
-T scalar_prod(const Eigen::Matrix<T, 4, 1> &p1,
-              const Eigen::Matrix<T, 4, 1> &p2) {
+template <class T> T scalar_prod(const quadv<T> &p1, const quadv<T> &p2) {
   T tmp = 0.0;
   for (size_t i = 1; i < 4; ++i)
     tmp += p1(i) * p2(i);
@@ -45,10 +39,8 @@ T scalar_prod(const Eigen::Matrix<T, 4, 1> &p1,
  * @param[in] p2
  * @return The result of cross product.
  */
-template <class T>
-Eigen::Matrix<T, 4, 1> vect_prod(const Eigen::Matrix<T, 4, 1> &p1,
-                                 const Eigen::Matrix<T, 4, 1> &p2) {
-  Eigen::Matrix<T, 4, 1> tmp;
+template <class T> quadv<T> vect_prod(const quadv<T> &p1, const quadv<T> &p2) {
+  quadv<T> tmp;
   tmp << .0, .0, .0, .0;
   tmp(1) = p1(2) * p2(3) - p1(3) * p2(2);
   tmp(2) = p1(3) * p2(1) - p1(1) * p2(3);
@@ -62,7 +54,7 @@ template <class T> struct PointCloud {
    * @brief Adaptator class between nanoflann and point_type.
    */
 
-  std::vector<quadv<T>> pts;
+  state_type2<T> pts;
 
   // Must return the number of data points
   inline size_t kdtree_get_point_count() const { return pts.size(); }
