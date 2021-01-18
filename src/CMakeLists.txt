@@ -5,10 +5,10 @@ configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp.in"
 
 set(SPACECHARGE_INC
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/alogger.hpp"
-    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/blosc_filter.h"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/boris.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/bunch.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/config_reader.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/csv.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/definitions.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/fields.hpp"
@@ -20,8 +20,8 @@ set(SPACECHARGE_INC
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
 
-set(SPACECHARGE_SRC "alogger.cpp" "blosc_filter.c" "bunch.cpp" "fields.cpp"
-                    "particle.cpp" "track.cpp")
+set(SPACECHARGE_SRC "alogger.cpp" "bunch.cpp" "config_reader.cpp" "fields.cpp"
+                    "particle.cpp" "run_manager.cpp" "track.cpp")
 
 add_library(SpaceCharge SHARED ${SPACECHARGE_INC} ${SPACECHARGE_SRC})
 

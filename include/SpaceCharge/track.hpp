@@ -2,6 +2,7 @@
 #define TRACK_HPP
 
 #include <filesystem>
+#include <h5cpp/hdf5.hpp>
 
 #include "SpaceCharge/fields.hpp"
 #include "SpaceCharge/particle.hpp"
@@ -22,12 +23,15 @@ private:
 
   FieldSPS<T> fieldmanager;
 
+  //std::function<const state_type2<T>, T> filter;
+
 public:
-  Track(Particle<T> part, quadv<T> pos0, quadv<T> v0, FieldSPS<T> &fieldmanager);
+  Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,
+        FieldSPS<T> &fieldmanager);
 
   void track();
 
-  void save(std::filesystem::path file);
+  void save(hdf5::node::Group group, const uint id) const;
 };
 
 template class Track<double>;
