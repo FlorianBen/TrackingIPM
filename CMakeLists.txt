@@ -21,7 +21,11 @@ if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-option(BUILD_DOXY_DOC "build doxygen documentation" ON)
+option(BUILD_DOXY_DOC "Build doxygen documentation" ON)
 if(BUILD_DOXY_DOC)
   add_subdirectory(docs)
 endif()
+
+option(USE_MPI "Enable MPI support." OFF)
+
+option(USE_HDF5_BLSOC "Enable BLOSC compression." OFF)

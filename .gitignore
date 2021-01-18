@@ -40,3 +40,4 @@ build/**
 proto/**
 temp/**
 *.h5
+config.hpp
