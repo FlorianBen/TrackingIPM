@@ -24,8 +24,7 @@ template <class T> void Track<T>::track() {
   auto lorentz = [&](const state_type2<T> &x, state_type2<T> &dxdt,
                      const double t) {
     quadv<T> Efield, Bfield;
-    Efield = this->fieldmanager->EfieldAt(x[0]);
-    Bfield = this->fieldmanager->MagfieldAt(x[0]);
+    state_type2<T> EMfield = this->fieldmanager->EMfielddAt(x[0]);
 
     dxdt[0] = x[1];
     dxdt[1] =
@@ -36,8 +35,9 @@ template <class T> void Track<T>::track() {
   };
 
   // Define observer
-  auto observer = [&](const state_type2<T> &x, T t) {
+  auto observer = [&](state_type2<T> &x, T t) {
     times.push_back(t);
+    x[0](0) = t;
     states.push_back(x);
   };
 

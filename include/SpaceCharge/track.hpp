@@ -23,7 +23,7 @@ private:
 
   FieldSPS<T> fieldmanager;
 
-  //std::function<const state_type2<T>, T> filter;
+  std::function<const state_type2<T>, T> filter;
 
 public:
   Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,

@@ -15,7 +15,7 @@ private:
 };
 } // namespace SpaceCharge
 
-// Client log macros
+// Log macros
 #define SC_TRACE(...)         ::SpaceCharge::Logger::GetLogger()->trace(__VA_ARGS__)
 #define SC_INFO(...)          ::SpaceCharge::Logger::GetLogger()->info(__VA_ARGS__)
 #define SC_WARN(...)          ::SpaceCharge::Logger::GetLogger()->warn(__VA_ARGS__)
