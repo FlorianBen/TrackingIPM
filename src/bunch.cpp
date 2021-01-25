@@ -1,6 +1,8 @@
-#include "SpaceCharge/bunch.hpp"
-
 #include <iostream>
+#include "spdlog/fmt/ostr.h"
+
+#include "SpaceCharge/alogger.hpp"
+#include "SpaceCharge/bunch.hpp"
 
 namespace SpaceCharge {
 
@@ -83,6 +85,12 @@ template <class T> T Bunch<T>::getFreqRF() const { return rf_freq; };
 template <class T> T Bunch<T>::getBunchPeriod() const { return dt; };
 
 template <class T>
+std::ostream& operator<<(std::ostream& os, const Bunch<T>& c)
+{ 
+    return os << "Bunch"; 
+}
+
+template <class T>
 GaussianBunch<T>::GaussianBunch(Particle<T> particle, T ib, T dt, cst::dir dir)
     : Bunch<T>(particle, ib, dt, dir) {
   sigma(0) = 0.e-3;
@@ -127,25 +135,25 @@ template <class T> void GaussianBunch<T>::setSigma(int index, T sigma) {
   updateSigma();
 }
 
-template <class T>
-void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 4, 1> pos) {
-  this->pos = pos;
-  updatePosition();
-}
+// template <class T>
+// void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 4, 1> pos) {
+//   this->pos = pos;
+//   updatePosition();
+// }
 
-template <class T>
-void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 3, 1> pos) {
-  this->pos.tail(3) = pos;
-  updatePosition();
-}
+// template <class T>
+// void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 3, 1> pos) {
+//   this->pos.tail(3) = pos;
+//   updatePosition();
+// }
 
-template <class T> void GaussianBunch<T>::setPosition(int index, T pos) {
-  if ((index < 1) || (index > 3)) {
-    return;
-  }
-  this->pos(index) = pos;
-  updatePosition();
-}
+// template <class T> void GaussianBunch<T>::setPosition(int index, T pos) {
+//   if ((index < 1) || (index > 3)) {
+//     return;
+//   }
+//   this->pos(index) = pos;
+//   updatePosition();
+// }
 
 template <class T> void GaussianBunch<T>::updateSigma() {
   this->sigma_ = (this->sigma).transpose() * (this->ltransform);
@@ -167,31 +175,13 @@ template <class T> void GaussianBunch<T>::updateSigma() {
   }
 };
 
-template <class T> void GaussianBunch<T>::updatePosition() {
-  this->pos_ = (this->pos).transpose() * (this->lboost);
-};
+template <class T> T GaussianBunch<T>::potentialAt(quadv<T> quad) const {
+  T V;
+  quadv<T> pos = quad;
+  quadv<T> pos_ = pos.transpose() * this->lboost;
 
-template <class T> void GaussianBunch<T>::updateFields() {
-  Eigen::Matrix<T, 4, 4> e_transform, b_transform;
-  e_transform << 0.0, 0.0, 0.0, 0.0, 0.0, this->particle.getGamma(), 0.0, 0.0,
-      0.0, 0.0, this->particle.getGamma(), 0.0, 0.0, 0.0, 0.0, 1.0;
-  b_transform << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-      -(this->particle.getGamma() * this->particle.getBeta() / cst::sol), 0.0,
-      0.0, this->particle.getGamma() * this->particle.getBeta() / cst::sol, 0.0,
-      0.0, 0.0, 0.0, 0.0, 0.0;
-  this->E = (this->E_).transpose() * (e_transform);
-  this->B = (this->E_).transpose() * (b_transform);
-};
-
-template <class T> T GaussianBunch<T>::potentialAt(quadv<T> quad) {
-  setPosition(quad);
-  internalPotential();
-  return V;
-};
-
-template <class T> void GaussianBunch<T>::internalPotential() {
   auto factor = this->Qb / (4.0 * cst::pi * cst::eps0 * std::sqrt(cst::pi));
-  auto fun = [=](T q) -> T {
+  auto fun = [&](T q) -> T {
     Eigen::Matrix<T, 4, 1> qv;
     qv << 0.0, q + 2 * std::pow(sigma_(1), 2), q + 2 * std::pow(sigma_(2), 2),
         q + 2 * std::pow(sigma_(3), 2);
@@ -201,7 +191,6 @@ template <class T> void GaussianBunch<T>::internalPotential() {
                     ((std::pow(pos_(3), 2)) / qv(3));
     return std::exp(term_rat) / term_root;
   };
-
   gsl_function_pp<decltype(fun)> Fp(fun);
   gsl_function *F = static_cast<gsl_function *>(&Fp);
   gsl_integration_workspace *work_ptr = gsl_integration_workspace_alloc(1000);
@@ -214,33 +203,43 @@ template <class T> void GaussianBunch<T>::internalPotential() {
   gsl_integration_qagiu(F, 0.0, abs_error, rel_error, 1000, work_ptr, &result,
                         &error);
   V = result;
-  error_V = error;
+  auto error_V = error;
   gsl_integration_workspace_free(work_ptr);
-}
 
-template <class T>
-Eigen::Matrix<T, 4, 1> GaussianBunch<T>::EfieldAt(quadv<T> quad) {
-  setPosition(quad);
-  internalField1();
-  return E;
+  return V;
 };
 
-template <class T> void GaussianBunch<T>::internalField1() {
+template <class T> quadv<T> GaussianBunch<T>::EfieldAt(quadv<T> quad) const {
+  return EMfielddAt(quad)[0];
+};
+
+template <class T> quadv<T> GaussianBunch<T>::MagfieldAt(quadv<T> quad) const {
+  return EMfielddAt(quad)[1];
+};
+
+template <class T>
+state_type2<T> GaussianBunch<T>::EMfielddAt(quadv<T> quad) const {
+  quadv<T> E_;
+  quadv<T> B_;
+  E_ << 0.0, 0.0, 0.0, 0.0;
+  B_ << 0.0, 0.0, 0.0, 0.0;
+
+  quadv<T> pos = quad;
+  quadv<T> pos_ = pos.transpose() * this->lboost;
+
   auto factor = this->Qb / (2.0 * cst::eps0 * std::sqrt(cst::pi) * sigma0);
   auto axis = 0;
+
   auto fun = [&](T eps) -> T {
     Eigen::Matrix<T, 3, 3> factor_int;
     Eigen::Matrix<T, 3, 3> qe;
-
     qe << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
         std::pow(sigma0, 2) * (1.0 / (1.0 - std::pow(eps, 2))),
         std::pow(sigma0, 2) * (std::pow(eps, 2) / (1.0 - std::pow(eps, 2))),
         2 * (std::pow(sigma_(this->dir + 1), 2) - std::pow(sigma_(1), 2)) +
             std::pow(sigma0, 2) * (1.0 / (1.0 - std::pow(eps, 2)));
-
     factor_int << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0 / std::pow(eps, 2),
         qe(this->dir, 0) / qe(this->dir, 2);
-
     auto term_root = std::sqrt(qe(2, this->dir));
     auto term_rat = -((std::pow(pos_(1), 2)) / qe(this->dir, 0)) -
                     ((std::pow(pos_(2), 2)) / qe(this->dir, 1)) -
@@ -262,18 +261,118 @@ template <class T> void GaussianBunch<T>::internalField1() {
                         GSL_INTEG_GAUSS31, work_ptr, &result, &error);
     E_(i + 1) = 2.0 * factor * (pos_(i + 1) / (sigma0 * cst::pi)) * result;
   }
-  updateFields();
   gsl_integration_workspace_free(work_ptr);
-  // delete F;
+  return transformFields(state_type2<T>{E_, B_});
+}
+
+template <class T> state_type2<T> GaussianBunch<T>::internalField1() const {
+  // auto factor = this->Qb / (2.0 * cst::eps0 * std::sqrt(cst::pi) * sigma0);
+  // auto axis = 0;
+  // auto fun = [&](T eps) -> T {
+  //   Eigen::Matrix<T, 3, 3> factor_int;
+  //   Eigen::Matrix<T, 3, 3> qe;
+
+  //   qe << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+  //       std::pow(sigma0, 2) * (1.0 / (1.0 - std::pow(eps, 2))),
+  //       std::pow(sigma0, 2) * (std::pow(eps, 2) / (1.0 - std::pow(eps, 2))),
+  //       2 * (std::pow(sigma_(this->dir + 1), 2) - std::pow(sigma_(1), 2)) +
+  //           std::pow(sigma0, 2) * (1.0 / (1.0 - std::pow(eps, 2)));
+
+  //   factor_int << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0 / std::pow(eps, 2),
+  //       qe(this->dir, 0) / qe(this->dir, 2);
+
+  //   auto term_root = std::sqrt(qe(2, this->dir));
+  //   auto term_rat = -((std::pow(pos_(1), 2)) / qe(this->dir, 0)) -
+  //                   ((std::pow(pos_(2), 2)) / qe(this->dir, 1)) -
+  //                   ((std::pow(pos_(3), 2)) / qe(this->dir, 2));
+  //   return factor_int(this->dir, axis) * std::exp(term_rat) / term_root;
+  // };
+
+  // gsl_function_pp<decltype(fun)> Fp(fun);
+  // gsl_function *F = static_cast<gsl_function *>(&Fp);
+  // gsl_integration_workspace *work_ptr =
+  // gsl_integration_workspace_alloc(1000); T abs_error = 1.0e-8; T rel_error
+  // = 1.0e-8; T result; T error;
+
+  // for (auto i = 0; i < 3; i++) {
+  //   axis = i;
+  //   gsl_integration_qag(F, kurt, 1.0, abs_error, rel_error, 1000,
+  //                       GSL_INTEG_GAUSS31, work_ptr, &result, &error);
+  //   E_(i + 1) = 2.0 * factor * (pos_(i + 1) / (sigma0 * cst::pi)) * result;
+  // }
+  // updateFields();
+  // gsl_integration_workspace_free(work_ptr);
 }
 
 template <class T>
-Eigen::Matrix<T, 4, 1> GaussianBunch<T>::MagfieldAt(quadv<T> quad) {
-  
+state_type2<T> GaussianBunch<T>::transformFields(state_type2<T> fields) const {
+  quadv<T> E, B;
+  E << 0.0, 0.0, 0.0, 0.0;
+  B << 0.0, 0.0, 0.0, 0.0;
+
+  Eigen::Matrix<T, 4, 4> e_transform, b_transform;
+  e_transform << 0.0, 0.0, 0.0, 0.0, 0.0, this->particle.getGamma(), 0.0, 0.0,
+      0.0, 0.0, this->particle.getGamma(), 0.0, 0.0, 0.0, 0.0, 1.0;
+  b_transform << 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+      -(this->particle.getGamma() * this->particle.getBeta() / cst::sol), 0.0,
+      0.0, this->particle.getGamma() * this->particle.getBeta() / cst::sol, 0.0,
+      0.0, 0.0, 0.0, 0.0, 0.0;
+  E = fields[0].transpose() * (e_transform);
+  B = fields[0].transpose() * (b_transform);
+  return state_type2<T>{E, B};
+}
+
+template <class T>
+BunchEMField<T>::BunchEMField() : use_periodicity(true), local_time(.0) {}
+
+template <class T>
+void BunchEMField<T>::addBunch(std::unique_ptr<Bunch<T>> bunch) {
+  bunches.push_back(std::move(bunch));
+}
+
+template <class T> void BunchEMField<T>::usePeriodicity(bool use) {
+  use_periodicity = use;
+}
+
+template <class T> quadv<T> BunchEMField<T>::EfieldAt(quadv<T> quad) const {
+  quadv<T> E;
+  E << 0.0, 0.0, 0.0, 0.0;
+  for (auto &bunch : bunches) {
+    if (use_periodicity) {
+      auto tloc = (quad(0) / cst::sol);
+      int rem = (int)std::floor(tloc / (bunch->getBunchPeriod()));
+      tloc = tloc - rem * (1 * bunch->getBunchPeriod());
+      if (tloc > (bunch->getBunchPeriod() / 2)) {
+        quad(0) = (tloc - bunch->getBunchPeriod()) * cst::sol;
+      } else {
+        quad(0) = tloc * cst::sol;
+      }
+
+      E += bunch->EfieldAt(quad);
+    } else {
+      E += bunch->EfieldAt(quad);
+    }
+  }
+  return E;
+}
+
+template <class T> quadv<T> BunchEMField<T>::MagfieldAt(quadv<T> quad) const {
+  quadv<T> B;
+  B << 0.0, 0.0, 0.0, 0.0;
   return B;
-};
+}
+
+template <class T>
+state_type2<T> BunchEMField<T>::EMfielddAt(quadv<T> quad) const {
+  quadv<T> E;
+  quadv<T> B;
+  E << 0.0, 0.0, 0.0, 0.0;
+  B << 0.0, 0.0, 0.0, 0.0;
+  return state_type2<T>{E, B};
+}
 
 template class Bunch<double>;
 template class GaussianBunch<double>;
+template class BunchEMField<double>;
 
 } // namespace SpaceCharge
