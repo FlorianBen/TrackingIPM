@@ -25,7 +25,6 @@ template <class T> void Track<T>::track() {
                      const double t) {
     quadv<T> Efield, Bfield;
     state_type2<T> EMfield = this->fieldmanager->EMfielddAt(x[0]);
-
     dxdt[0] = x[1];
     dxdt[1] =
         ((particle.getCharge() * SpaceCharge::cst::e) /
