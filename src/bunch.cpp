@@ -1,5 +1,4 @@
-#include <iostream>
-#include "spdlog/fmt/ostr.h"
+#include <spdlog/fmt/ostr.h>
 
 #include "SpaceCharge/alogger.hpp"
 #include "SpaceCharge/bunch.hpp"
@@ -85,9 +84,8 @@ template <class T> T Bunch<T>::getFreqRF() const { return rf_freq; };
 template <class T> T Bunch<T>::getBunchPeriod() const { return dt; };
 
 template <class T>
-std::ostream& operator<<(std::ostream& os, const Bunch<T>& c)
-{ 
-    return os << "Bunch"; 
+std::ostream &operator<<(std::ostream &os, const Bunch<T> &c) {
+  return os << "Bunch";
 }
 
 template <class T>
@@ -301,6 +299,8 @@ template <class T> state_type2<T> GaussianBunch<T>::internalField1() const {
   // }
   // updateFields();
   // gsl_integration_workspace_free(work_ptr);
+  quadv<T> E, B;
+  return state_type2<T>{E, B};
 }
 
 template <class T>
@@ -346,7 +346,6 @@ template <class T> quadv<T> BunchEMField<T>::EfieldAt(quadv<T> quad) const {
       } else {
         quad(0) = tloc * cst::sol;
       }
-
       E += bunch->EfieldAt(quad);
     } else {
       E += bunch->EfieldAt(quad);
@@ -365,10 +364,27 @@ template <class T>
 state_type2<T> BunchEMField<T>::EMfieldAt(quadv<T> quad) const {
   quadv<T> E;
   quadv<T> B;
-  E << 0.0, 0.0, 0.0, 0.0;
-  B << 0.0, 0.0, 0.0, 0.0;
+  for (auto &bunch : bunches) {
+    if (use_periodicity) {
+      auto tloc = (quad(0) / cst::sol);
+      int rem = (int)std::floor(tloc / (bunch->getBunchPeriod()));
+      tloc = tloc - rem * (1 * bunch->getBunchPeriod());
+      if (tloc > (bunch->getBunchPeriod() / 2)) {
+        quad(0) = (tloc - bunch->getBunchPeriod()) * cst::sol;
+      } else {
+        quad(0) = tloc * cst::sol;
+      }
+      state_type2<T> temp_EM = bunch->EMfieldAt(quad);
+      E += temp_EM[0];
+      B += temp_EM[1];
+    } else {
+      state_type2<T> temp_EM = bunch->EMfieldAt(quad);
+      E += temp_EM[0];
+      B += temp_EM[1];
+    }
+  }
   return state_type2<T>{E, B};
-}
+} // namespace SpaceCharge
 
 template class Bunch<double>;
 template class GaussianBunch<double>;
