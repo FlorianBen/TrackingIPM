@@ -210,20 +210,19 @@ template <class T> T GaussianBunch<T>::potentialAt(quadv<T> quad) const {
 };
 
 template <class T> quadv<T> GaussianBunch<T>::EfieldAt(quadv<T> quad) const {
-  return EMfielddAt(quad)[0];
+  return EMfieldAt(quad)[0];
 };
 
 template <class T> quadv<T> GaussianBunch<T>::MagfieldAt(quadv<T> quad) const {
-  return EMfielddAt(quad)[1];
+  return EMfieldAt(quad)[1];
 };
 
 template <class T>
-state_type2<T> GaussianBunch<T>::EMfielddAt(quadv<T> quad) const {
+state_type2<T> GaussianBunch<T>::EMfieldAt(quadv<T> quad) const {
   quadv<T> E_;
   quadv<T> B_;
   E_ << 0.0, 0.0, 0.0, 0.0;
   B_ << 0.0, 0.0, 0.0, 0.0;
-
   quadv<T> pos = quad;
   quadv<T> pos_ = pos.transpose() * this->lboost;
 
@@ -363,7 +362,7 @@ template <class T> quadv<T> BunchEMField<T>::MagfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-state_type2<T> BunchEMField<T>::EMfielddAt(quadv<T> quad) const {
+state_type2<T> BunchEMField<T>::EMfieldAt(quadv<T> quad) const {
   quadv<T> E;
   quadv<T> B;
   E << 0.0, 0.0, 0.0, 0.0;

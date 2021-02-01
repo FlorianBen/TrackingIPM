@@ -43,7 +43,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const = 0;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const = 0;
 };
 
 template <typename T> using FieldSP = std::unique_ptr<EMField<T>>;
@@ -81,7 +81,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const override;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 };
 
 /**
@@ -124,7 +124,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const override;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 
   size_t interpolateNN(const quadv<T> pos, quadv<T> &fieldv,
                        size_t size = 7) const;
@@ -189,7 +189,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const override;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 };
 
 }; // namespace SpaceCharge

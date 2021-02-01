@@ -219,7 +219,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const override;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 
   state_type2<T> transformFields(state_type2<T> fields) const;
 };
@@ -290,7 +290,7 @@ public:
    * \return EM field double vectors.
    * The derived class must implement this function.
    **/
-  virtual state_type2<T> EMfielddAt(quadv<T> quad) const override;
+  virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 };
 
 } // namespace SpaceCharge

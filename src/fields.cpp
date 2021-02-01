@@ -25,7 +25,7 @@ quadv<T> ConstantEMField<T>::MagfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-state_type2<T> ConstantEMField<T>::EMfielddAt(quadv<T> quad) const {
+state_type2<T> ConstantEMField<T>::EMfieldAt(quadv<T> quad) const {
   return emfield;
 }
 
@@ -47,7 +47,7 @@ template <class T> quadv<T> CSVFileEMField<T>::MagfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-state_type2<T> CSVFileEMField<T>::EMfielddAt(quadv<T> quad) const {
+state_type2<T> CSVFileEMField<T>::EMfieldAt(quadv<T> quad) const {
   return state_type2<T>{EfieldAt(quad), MagfieldAt(quad)};
 }
 
@@ -176,13 +176,13 @@ quadv<T> EMFieldsManager<T>::MagfieldAt(quadv<T> quad) const {
 }
 
 template <class T>
-state_type2<T> EMFieldsManager<T>::EMfielddAt(quadv<T> quad) const {
+state_type2<T> EMFieldsManager<T>::EMfieldAt(quadv<T> quad) const {
   quadv<T> E;
   quadv<T> B;
   E << 0.0, 0.0, 0.0, 0.0;
   B << 0.0, 0.0, 0.0, 0.0;
   for (auto &field : fields) {
-    auto em = field->EMfielddAt(quad);
+    auto em = field->EMfieldAt(quad);
     E += em[0];
     B += em[1];
   }
