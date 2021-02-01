@@ -1,5 +1,3 @@
-# set(CMAKE_CXX_CLANG_TIDY clang-tidy -checks=-*,readability-*)
-
 configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp.in"
                "${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp")
 
@@ -11,17 +9,27 @@ set(SPACECHARGE_INC
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/config_reader.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/csv.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/definitions.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/field_map.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/field_map_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/fields.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/nanoflann.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/particle.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/point_cloud.hpp"
+    "${PROJECT_SOURCE_DIR}/include/SpaceCharge/quadv_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/run_manager.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/track_h5.hpp"
     "${PROJECT_SOURCE_DIR}/include/SpaceCharge/units.hpp")
 
-set(SPACECHARGE_SRC "alogger.cpp" "bunch.cpp" "config_reader.cpp" "fields.cpp"
-                    "particle.cpp" "run_manager.cpp" "track.cpp")
+set(SPACECHARGE_SRC
+    "alogger.cpp"
+    "bunch.cpp"
+    "config_reader.cpp"
+    "field_map.cpp"
+    "fields.cpp"
+    "particle.cpp"
+    "run_manager.cpp"
+    "track.cpp")
 
 add_library(SpaceCharge SHARED ${SPACECHARGE_INC} ${SPACECHARGE_SRC})
 
@@ -29,6 +37,7 @@ find_package(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(Boost REQUIRED)
 find_package(spdlog REQUIRED)
+find_package(TBB REQUIRED)
 
 if(${USE_MPI})
   find_package(MPI REQUIRED)
@@ -55,8 +64,14 @@ target_include_directories(
          $<INSTALL_INTERFACE:include>)
 
 target_compile_features(SpaceCharge PUBLIC cxx_std_17)
-target_link_libraries(SpaceCharge h5cpp GSL::gsl Eigen3::Eigen Boost::boost
-                      spdlog::spdlog)
+target_link_libraries(
+  SpaceCharge
+  h5cpp
+  GSL::gsl
+  Eigen3::Eigen
+  Boost::boost
+  spdlog::spdlog
+  TBB::tbb)
 
 if(${USE_MPI})
   target_link_libraries(SpaceCharge PUBLIC MPI::MPI_CXX)
