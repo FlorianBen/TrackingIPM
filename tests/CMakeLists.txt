@@ -1,19 +1,15 @@
+# ##############################################################################
+# CMake file for tests
+# ##############################################################################
+# Author: Florian Benedetti Date: 2021/02/02
+
+include(CTest)
+enable_testing()
+include(GoogleTest)
+
 add_subdirectory("${PROJECT_SOURCE_DIR}/vendor/googletest" "vendor/googletest")
 
-mark_as_advanced(
-    BUILD_GMOCK BUILD_GTEST BUILD_SHARED_LIBS
-    gmock_build_tests gtest_build_samples gtest_build_tests
-    gtest_disable_pthreads gtest_force_shared_crt gtest_hide_internal_symbols
-)
-
-macro(package_add_test TESTNAME)
-    add_executable(${TESTNAME} ${ARGN})
-    target_link_libraries(${TESTNAME} gtest gmock gtest_main SpaceCharge)
-    add_test(NAME ${TESTNAME} COMMAND ${TESTNAME})
-    set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
-endmacro()
-
-package_add_test(test_particle test_particle.cpp)
-package_add_test(test_bunch test_bunch.cpp)
-package_add_test(test_field test_field.cpp)
-#package_add_test(test_particle test_particle.cpp)
+project_add_gtest(test_particle test_particle.cpp SpaceCharge "${PROJECT_DIR}")
+project_add_gtest(test_bunch test_bunch.cpp SpaceCharge "${PROJECT_DIR}")
+project_add_gtest(test_field test_field.cpp SpaceCharge "${PROJECT_DIR}")
+project_add_gtest(test_logger test_logger.cpp SpaceCharge "${PROJECT_DIR}")

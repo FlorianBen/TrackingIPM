@@ -45,8 +45,7 @@ option(BUILD_TESTS "Build the google tests" OFF)
 add_subdirectory(src)
 add_subdirectory(temp)
 
-include(CTest)
-if(BUILD_TESTING)
+if(BUILD_TESTS)
   add_subdirectory(tests)
 endif()
 

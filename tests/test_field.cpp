@@ -1,6 +1,8 @@
 #include "gtest/gtest.h"
 
+#include "SpaceCharge/particle.hpp"
 #include "SpaceCharge/fields.hpp"
+#include "SpaceCharge/bunch.hpp"
 #include "SpaceCharge/units.hpp"
 
 class FieldBunchTest : public ::testing::Test {
@@ -24,7 +26,7 @@ protected:
 
   SpaceCharge::Particle<double> part;
   SpaceCharge::GaussianBunch<double> bunch;
-  SpaceCharge::FieldBunch<double> field;
+  SpaceCharge::BunchEMField<double> field;
 };
 
 TEST_F(FieldBunchTest, Potential) {
