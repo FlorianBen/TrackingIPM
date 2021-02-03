@@ -2,8 +2,6 @@
 
 namespace SpaceCharge {
 
-// template <class T> Particle<T>::Particle(){};
-
 template <class T>
 Particle<T>::Particle(std::string name, int p_charge, T pmass,
                       cst::lfactor factor, T lfactor_v)
