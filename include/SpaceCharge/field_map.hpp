@@ -15,18 +15,12 @@ private:
   quadv<T> qstep;
   quadv<T> qoffset;
 
-  tbb::concurrent_vector<quadv<T>> data_;
-  std::vector<quadv<T>> data2_;
-  tbb::concurrent_vector<T> data_pot;
+  std::vector<quadv<T>> data_;
   std::vector<FieldSP<T>> input_fields;
 
 public:
   FieldMap();
   FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset);
-
-  const quadv<T> &operator()(size_t i, size_t j, size_t k) const;
-
-  quadv<T> &operator()(size_t i, size_t j, size_t k);
 
   size_t size() const;
 
