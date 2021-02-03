@@ -1,3 +1,8 @@
+# ##############################################################################
+# Main CMake file
+# ##############################################################################
+# Author: Florian Benedetti Date: 2021/02/02
+
 cmake_minimum_required(VERSION 3.10)
 project(
   SpaceCharge
@@ -9,9 +14,33 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
+include(SpaceChargeUtils)
+
+# ##############################################################################
+# Options and configuration
+# ##############################################################################
+
 option(WITH_BOOST "enable Boost filesystem support" OFF)
-set(CONAN "DISABLE" CACHE STRING "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE")
+set(CONAN
+    "DISABLE"
+    CACHE
+      STRING
+      "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE"
+)
 add_subdirectory(vendor/h5cpp)
+
+option(USE_MPI "Enable MPI support." OFF)
+
+option(USE_HDF5_BLSOC "Enable BLOSC compression." OFF)
+
+option(BUILD_DOC "Build doxygen documentation" OFF)
+
+option(BUILD_TESTS "Build the google tests" OFF)
+
+
+# ##############################################################################
+# Add directories according to options
+# ##############################################################################
 
 add_subdirectory(src)
 add_subdirectory(temp)
@@ -21,8 +50,7 @@ if(BUILD_TESTING)
   add_subdirectory(tests)
 endif()
 
-option(BUILD_DOXY_DOC "Build doxygen documentation" ON)
-if(BUILD_DOXY_DOC)
+if(BUILD_DOC)
   add_subdirectory(docs)
 endif()
 

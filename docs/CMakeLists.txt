@@ -1,3 +1,9 @@
+# ##############################################################################
+# Cmake file for the documentation
+# ##############################################################################
+# Author: Florian Benedetti 
+# Date: 2021/02/02
+
 find_package(Doxygen REQUIRED)
 find_package(Sphinx REQUIRED)
 
