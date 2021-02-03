@@ -5,6 +5,7 @@
 #include <Eigen/Dense>
 
 #include <iostream>
+#include <spdlog/fmt/ostr.h>
 
 namespace SpaceCharge {
 
@@ -97,5 +98,13 @@ template <class T> struct PointCloud {
 };
 
 }; // namespace SpaceCharge
+
+namespace Eigen {
+template <class T>
+std::ostream &operator<<(std::ostream &os, const SpaceCharge::quadv<T> &qv) {
+  os << qv(0) << "," << qv(1) << "," << qv(2) << "," << qv(3);
+  return os;
+}
+} // namespace Eigen
 
 #endif
