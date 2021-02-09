@@ -1,3 +1,8 @@
+# ##############################################################################
+# CMake file for library
+# ##############################################################################
+# Author: Florian Benedetti Date: 2021/02/02
+
 configure_file("${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp.in"
                "${PROJECT_SOURCE_DIR}/include/SpaceCharge/config.hpp")
 
