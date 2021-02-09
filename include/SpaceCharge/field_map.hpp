@@ -14,13 +14,14 @@ private:
   quadv<size_t> qsize;
   quadv<T> qstep;
   quadv<T> qoffset;
+  T time;
 
   std::vector<quadv<T>> data_;
   std::vector<FieldSP<T>> input_fields;
 
 public:
   FieldMap();
-  FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset);
+  FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset, T time);
 
   size_t size() const;
 
