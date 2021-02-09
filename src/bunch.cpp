@@ -217,10 +217,8 @@ template <class T> quadv<T> GaussianBunch<T>::MagfieldAt(quadv<T> quad) const {
 
 template <class T>
 state_type2<T> GaussianBunch<T>::EMfieldAt(quadv<T> quad) const {
-  quadv<T> E_;
-  quadv<T> B_;
-  E_ << 0.0, 0.0, 0.0, 0.0;
-  B_ << 0.0, 0.0, 0.0, 0.0;
+  quadv<T> E_{0.0, 0.0, 0.0, 0.0};
+  quadv<T> B_{0.0, 0.0, 0.0, 0.0};
   quadv<T> pos = quad;
   quadv<T> pos_ = pos.transpose() * this->lboost;
 
@@ -305,9 +303,8 @@ template <class T> state_type2<T> GaussianBunch<T>::internalField1() const {
 
 template <class T>
 state_type2<T> GaussianBunch<T>::transformFields(state_type2<T> fields) const {
-  quadv<T> E, B;
-  E << 0.0, 0.0, 0.0, 0.0;
-  B << 0.0, 0.0, 0.0, 0.0;
+  quadv<T> E{0.0, 0.0, 0.0, 0.0};
+  quadv<T> B{0.0, 0.0, 0.0, 0.0};
 
   Eigen::Matrix<T, 4, 4> e_transform, b_transform;
   e_transform << 0.0, 0.0, 0.0, 0.0, 0.0, this->particle.getGamma(), 0.0, 0.0,
@@ -334,8 +331,7 @@ template <class T> void BunchEMField<T>::usePeriodicity(bool use) {
 }
 
 template <class T> quadv<T> BunchEMField<T>::EfieldAt(quadv<T> quad) const {
-  quadv<T> E;
-  E << 0.0, 0.0, 0.0, 0.0;
+  quadv<T> E{0.0, 0.0, 0.0, 0.0};
   for (auto &bunch : bunches) {
     if (use_periodicity) {
       auto tloc = (quad(0) / cst::sol);
@@ -362,8 +358,8 @@ template <class T> quadv<T> BunchEMField<T>::MagfieldAt(quadv<T> quad) const {
 
 template <class T>
 state_type2<T> BunchEMField<T>::EMfieldAt(quadv<T> quad) const {
-  quadv<T> E;
-  quadv<T> B;
+  quadv<T> E{0.0, 0.0, 0.0, 0.0};
+  quadv<T> B{0.0, 0.0, 0.0, 0.0};
   for (auto &bunch : bunches) {
     if (use_periodicity) {
       auto tloc = (quad(0) / cst::sol);
