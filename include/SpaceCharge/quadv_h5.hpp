@@ -14,9 +14,22 @@ public:
   static TypeClass create(const Type & = Type()) {
     Compound type = Compound::create(sizeof(Type));
     type.insert("t", 0, TypeTrait<T>::create());
-    type.insert("Fx", sizeof(T), TypeTrait<T>::create());
-    type.insert("Fy", sizeof(T) * 2, TypeTrait<T>::create());
-    type.insert("Fz", sizeof(T) * 3, TypeTrait<T>::create());
+    type.insert("x", sizeof(T), TypeTrait<T>::create());
+    type.insert("y", sizeof(T) * 2, TypeTrait<T>::create());
+    type.insert("z", sizeof(T) * 3, TypeTrait<T>::create());
+    return type;
+  }
+};
+
+template <typename T> class TypeTrait<SpaceCharge::state_type2<T>> {
+public:
+  using Type = SpaceCharge::state_type2<T>;
+  using TypeClass = Compound;
+
+  static TypeClass create(const Type & = Type()) {
+    Compound type = Compound::create(sizeof(Type));
+    type.insert("V", 0, TypeTrait<SpaceCharge::quadv<T>>::create());
+    type.insert("Vp", sizeof(T) * 4, TypeTrait<SpaceCharge::quadv<T>>::create());
     return type;
   }
 };
