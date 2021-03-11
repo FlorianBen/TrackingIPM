@@ -8,12 +8,12 @@ namespace SpaceCharge {
 template <typename T>
 FieldMap<T>::FieldMap()
     : qsize(quadv<size_t>{0, 0, 0, 0}), qstep(quadv<T>{.0, .0, .0, .0}),
-      qoffset(quadv<T>{.0, .0, .0, .0}), data_(0) {}
+      qoffset(quadv<T>{.0, .0, .0, .0}), time(.0), data_(0) {}
 
 template <typename T>
-FieldMap<T>::FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset)
+FieldMap<T>::FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset, T time)
     : qsize(size), qstep(step), qoffset(offset),
-      data_(qsize(1) * qsize(2) * qsize(3)){
+      data_(qsize(1) * qsize(2) * qsize(3)), time(.0) {
 
       };
 
@@ -44,21 +44,18 @@ template <typename T> void FieldMap<T>::computeField() {
                x++) {
             for (int z = r.pages().begin(), z_end = r.pages().end(); z < z_end;
                  z++) {
-
-              // for (auto y = 0; y < ny(); y++) {
-              //   for (auto x = 0; x < nx(); x++) {
-              //     for (auto z = 0; z < nz(); z++) {
               for (auto &field : input_fields) {
-                quadv<T> pos{0.0, x * qstep(1) + qoffset(1),
+                quadv<T> pos{qoffset(0), x * qstep(1) + qoffset(1),
                              y * qstep(2) + qoffset(2),
                              z * qstep(3) + qoffset(3)};
-                data_[z + x * nz() + y * nx() * nz()] = field->EfieldAt(pos);
+                data_[z + x * nz() + y * nx() * nz()] =
+                    field->EMfieldAt(pos)[0];
               }
             }
           }
         }
       });
-} // namespace SpaceCharge
+}
 
 template class FieldMap<double>;
 
