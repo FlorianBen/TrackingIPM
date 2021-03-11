@@ -45,7 +45,6 @@ template <class T> void Track<T>::track() {
       times.push_back(t);
       x[0](0) = t;
       pos.push_back(x[0]);
-      // states.push_back(x);
     }
   };
 
@@ -69,36 +68,6 @@ template <class T> bool Track<T>::filter(const quadv<T> &pos) const {
   if ((pos(3) > 0.05) || (pos(3) < -0.05))
     return false;
   return true;
-}
-
-template <class T>
-void Track<T>::save(hdf5::node::Group group, const uint id) const {
-  using namespace hdf5;
-  hdf5::property::LinkCreationList lcpl;
-  hdf5::property::DatasetCreationList dcpl;
-  dcpl.layout(hdf5::property::DatasetLayout::CHUNKED);
-  dcpl.chunk(hdf5::Dimensions{256});
-  auto filter = std::make_unique<hdf5::filter::Deflate>(8u);
-  filter->operator()(dcpl);
-
-  node::Group root_group =
-      group.create_group("track_" + std::to_string(id), lcpl);
-  // node::Dataset dataset(root_group, "time",
-  // datatype::create<std::vector<T>>(),
-  //                       dataspace::create(times), lcpl, dcpl);
-
-  // dataset.write(times);
-
-  // auto type = datatype::create<SpaceCharge::quadv<T>>();
-  auto dset = group.create_dataset(
-      "pos", datatype::create<SpaceCharge::Track<double>>(),
-      dataspace::create(*this), dcpl, lcpl);
-  dset.write(*this);
-
-  // VectorAppender<T> positions_appender(temp, "position");
-  // for (auto state : states) {
-  //   positions_appender(state[0]);
-  // }
 }
 
 } // namespace SpaceCharge

@@ -38,8 +38,6 @@ public:
   const quadv<T> *data() const;
 
   size_t size() const;
-
-  void save(hdf5::node::Group group, const uint id) const;
 };
 
 template class Track<double>;
