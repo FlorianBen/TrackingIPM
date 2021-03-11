@@ -49,12 +49,11 @@ template <class T> quadv<T> vect_prod(const quadv<T> &p1, const quadv<T> &p2) {
   return tmp;
 }
 
+/**
+ * @struct PointCloud point_cloud.hpp "include/point_type.hpp"
+ * @brief Adaptator class between nanoflann and point_type.
+ */
 template <class T> struct PointCloud {
-  /**
-   * @struct point point_type.hpp "include/point_type.hpp"
-   * @brief Adaptator class between nanoflann and point_type.
-   */
-
   state_type2<T> pts;
 
   // Must return the number of data points

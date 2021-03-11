@@ -247,7 +247,7 @@ private:
 };
 
 /**
- * \class FieldBunch fields.hpp
+ * \class BunchEMField fields.hpp
  * \brief A class that represents an EM field created by particle bunches.
  * Several bunch can be added. The resulting EM field is the sum of the
  * contribution of each bunch.

@@ -9,7 +9,7 @@
 namespace SpaceCharge {
 
 /**
- * \class Field fields.hpp
+ * \class EMField fields.hpp
  * \brief Virutal class that represents an EM field.
  **/
 template <class T> class EMField {
@@ -50,7 +50,7 @@ template <typename T> using FieldSP = std::unique_ptr<EMField<T>>;
 template <typename T> using FieldSPS = std::shared_ptr<EMField<T>>;
 
 /**
- * \class ConstantField fields.hpp
+ * \class ConstantEMField fields.hpp
  * \brief A class that represents a constant EM field.
  **/
 template <class T> class ConstantEMField : public EMField<T> {
@@ -58,6 +58,11 @@ private:
   state_type2<T> emfield;
 
 public:
+  /**
+   * \brief Constructor.
+   * Construct a constant field.
+   * \param[in] emfield E and B vectors.
+   **/
   ConstantEMField(state_type2<T> emfield);
 
   /**
@@ -85,7 +90,7 @@ public:
 };
 
 /**
- * \class FieldCOMSOL fields.hpp
+ * \class CSVFileEMField fields.hpp
  * \brief A class that represents an EM field from a COMSOL file.
  **/
 template <class T> class CSVFileEMField : public EMField<T> {
@@ -145,7 +150,7 @@ public:
 };
 
 /**
- * \class Fields fields.hpp
+ * \class EMFieldsManager fields.hpp
  * \brief A class that represents an EM field created by several fields.
  * The resulting EM field is the sum of the
  * contribution of each field.
