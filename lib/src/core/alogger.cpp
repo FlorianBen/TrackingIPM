@@ -1,7 +1,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 
-#include "SpaceCharge/alogger.hpp"
+#include "SpaceCharge/core/alogger.hpp"
 
 namespace SpaceCharge {
 std::shared_ptr<spdlog::logger> Logger::logger;

@@ -1,12 +1,10 @@
 #include <boost/numeric/odeint.hpp>
-#include <h5cpp/hdf5.hpp>
 #include <thread>
 
-#include "SpaceCharge/alogger.hpp"
-#include "SpaceCharge/blosc_filter.h"
-#include "SpaceCharge/definitions.hpp"
-#include "SpaceCharge/track.hpp"
-#include "SpaceCharge/track_h5.hpp"
+#include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/io/blosc_filter.h"
+#include "SpaceCharge/core/definitions.hpp"
+#include "SpaceCharge/track/track.hpp"
 
 namespace SpaceCharge {
 

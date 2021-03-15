@@ -1,4 +1,4 @@
-#include "SpaceCharge/particle.hpp"
+#include "SpaceCharge/core/particle.hpp"
 
 namespace SpaceCharge {
 

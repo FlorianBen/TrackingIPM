@@ -4,8 +4,8 @@
 #include <tbb/concurrent_vector.h>
 #include <vector>
 
-#include "SpaceCharge/alogger.hpp"
-#include "SpaceCharge/fields.hpp"
+#include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/field/fields.hpp"
 
 namespace SpaceCharge {
 

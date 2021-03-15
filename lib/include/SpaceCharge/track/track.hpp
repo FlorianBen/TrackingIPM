@@ -2,11 +2,10 @@
 #define TRACK_HPP
 
 #include <filesystem>
-#include <h5cpp/hdf5.hpp>
 
-#include "SpaceCharge/fields.hpp"
-#include "SpaceCharge/particle.hpp"
-#include "SpaceCharge/point_cloud.hpp"
+#include "SpaceCharge/field/fields.hpp"
+#include "SpaceCharge/core/particle.hpp"
+#include "SpaceCharge/core/point_cloud.hpp"
 
 namespace SpaceCharge {
 

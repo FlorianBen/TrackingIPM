@@ -3,8 +3,8 @@
 
 #include <h5cpp/hdf5.hpp>
 
-#include "SpaceCharge/quadv_h5.hpp"
-#include "SpaceCharge/track.hpp"
+#include "SpaceCharge/io/quadv_h5.hpp"
+#include "SpaceCharge/track/track.hpp"
 
 namespace hdf5 {
 namespace datatype {

@@ -8,11 +8,11 @@
 
 #include <gsl/gsl_integration.h>
 
-#include "SpaceCharge/definitions.hpp"
-#include "SpaceCharge/fields.hpp"
-#include "SpaceCharge/particle.hpp"
-#include "SpaceCharge/point_cloud.hpp"
-#include "SpaceCharge/units.hpp"
+#include "SpaceCharge/core/definitions.hpp"
+#include "SpaceCharge/field/fields.hpp"
+#include "SpaceCharge/core/particle.hpp"
+#include "SpaceCharge/core/point_cloud.hpp"
+#include "SpaceCharge/core/units.hpp"
 
 namespace SpaceCharge {
 

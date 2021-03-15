@@ -17,7 +17,7 @@
 #include <errno.h>
 #include <hdf5.h>
 
-#include "SpaceCharge/blosc_filter.h"
+#include "SpaceCharge/io/blosc_filter.h"
 
 #if defined(__GNUC__)
 #define PUSH_ERR(func, minor, str, ...) H5Epush(H5E_DEFAULT, __FILE__, func, __LINE__, H5E_ERR_CLS, H5E_PLINE, minor, str, ##__VA_ARGS__)

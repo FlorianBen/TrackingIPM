@@ -1,7 +1,7 @@
 #include <spdlog/fmt/ostr.h>
 
-#include "SpaceCharge/alogger.hpp"
-#include "SpaceCharge/bunch.hpp"
+#include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/field/bunch.hpp"
 
 namespace SpaceCharge {
 

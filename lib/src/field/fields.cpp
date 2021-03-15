@@ -1,8 +1,8 @@
 #include <iostream>
 
-#include "SpaceCharge/alogger.hpp"
-#include "SpaceCharge/csv.hpp"
-#include "SpaceCharge/fields.hpp"
+#include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/core/csv.hpp"
+#include "SpaceCharge/field/fields.hpp"
 
 // TODO: Implémenter les fonctions
 

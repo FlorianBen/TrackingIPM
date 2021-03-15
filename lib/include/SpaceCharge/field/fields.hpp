@@ -3,8 +3,8 @@
 
 #include <memory>
 
-#include "nanoflann.hpp"
-#include "point_cloud.hpp"
+#include "SpaceCharge/core/nanoflann.hpp"
+#include "SpaceCharge/core/point_cloud.hpp"
 
 namespace SpaceCharge {
 

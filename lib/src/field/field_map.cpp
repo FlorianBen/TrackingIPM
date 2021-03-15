@@ -1,7 +1,7 @@
 #include <tbb/blocked_range3d.h>
 #include <tbb/parallel_for.h>
 
-#include "SpaceCharge/field_map.hpp"
+#include "SpaceCharge/field/field_map.hpp"
 
 namespace SpaceCharge {
 
