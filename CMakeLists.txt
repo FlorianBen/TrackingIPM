@@ -35,6 +35,8 @@ option(USE_HDF5_BLSOC "Enable BLOSC compression." OFF)
 
 option(BUILD_DOC "Build doxygen documentation" OFF)
 
+option(BUILD_SAMPLES "Build the samples" ON)
+
 option(BUILD_TESTS "Build the google tests" OFF)
 
 option(ENABLE_COVERAGE "Enable coverage report" OFF)
@@ -57,7 +59,9 @@ endif()
 
 add_subdirectory(lib)
 
-#add_subdirectory(temp)
+if(BUILD_SAMPLES)
+  add_subdirectory(samples)
+endif()
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
