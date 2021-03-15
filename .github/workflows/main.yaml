@@ -31,7 +31,7 @@ jobs:
       uses: lukka/get-cmake@latest
 
     - name: Install system dependencies
-      run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev
+      run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev libtbb-dev
       
     - name: Configure & Build
       uses: lukka/run-cmake@v2
