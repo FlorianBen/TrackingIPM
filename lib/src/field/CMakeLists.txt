@@ -17,11 +17,15 @@ install(FILES ${HEADER_FIELD}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SpaceCharge/field/)
 
 # Dependencies
+find_package(GSL REQUIRED)
 
 add_library(field SHARED ${HEADER_FIELD} ${LIB_FIELD})
 add_library(SpaceCharge::field ALIAS field)
 
-target_link_libraries(field PUBLIC core)
+target_link_libraries(
+  field
+  PUBLIC core
+  PUBLIC GSL::gsl)
 
 target_include_directories(
   field PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/lib/include/>
