@@ -27,13 +27,15 @@ set(CONAN
       STRING
       "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE"
 )
-add_subdirectory(vendor/h5cpp)
+#add_subdirectory(vendor/h5cpp)
 
 option(USE_MPI "Enable MPI support." OFF)
 
 option(USE_HDF5_BLSOC "Enable BLOSC compression." OFF)
 
 option(BUILD_DOC "Build doxygen documentation" OFF)
+
+option(BUILD_SAMPLES "Build the samples" ON)
 
 option(BUILD_TESTS "Build the google tests" OFF)
 
@@ -55,8 +57,11 @@ endif()
 # Add directories according to options
 # ##############################################################################
 
-add_subdirectory(src)
-add_subdirectory(temp)
+add_subdirectory(lib)
+
+if(BUILD_SAMPLES)
+  add_subdirectory(samples)
+endif()
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
