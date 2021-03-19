@@ -9,7 +9,7 @@ include(GoogleTest)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/vendor/googletest" "vendor/googletest")
 
-project_add_gtest(test_particle test_particle.cpp SpaceCharge "${PROJECT_DIR}")
-project_add_gtest(test_bunch test_bunch.cpp SpaceCharge "${PROJECT_DIR}")
-project_add_gtest(test_field test_field.cpp SpaceCharge "${PROJECT_DIR}")
-project_add_gtest(test_logger test_logger.cpp SpaceCharge "${PROJECT_DIR}")
+project_add_gtest(test_particle test_particle.cpp SpaceCharge::core "${PROJECT_DIR}")
+project_add_gtest(test_bunch test_bunch.cpp SpaceCharge::field "${PROJECT_DIR}")
+project_add_gtest(test_field test_field.cpp SpaceCharge::field  "${PROJECT_DIR}")
+project_add_gtest(test_logger test_logger.cpp SpaceCharge::core "${PROJECT_DIR}")

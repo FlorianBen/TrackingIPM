@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "SpaceCharge/bunch.hpp"
-#include "SpaceCharge/units.hpp"
+#include "SpaceCharge/field/bunch.hpp"
+#include "SpaceCharge/core/units.hpp"
 
 class BunchTest : public ::testing::Test {
 

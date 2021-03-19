@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "SpaceCharge/alogger.hpp"
+#include "SpaceCharge/core/alogger.hpp"
 
 class LoggerTest : public ::testing::Test {
 

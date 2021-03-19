@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
 
-#include "SpaceCharge/particle.hpp"
-#include "SpaceCharge/units.hpp"
+#include "SpaceCharge/core/particle.hpp"
+#include "SpaceCharge/core/units.hpp"
 
 class ParticleTest : public ::testing::Test {
 

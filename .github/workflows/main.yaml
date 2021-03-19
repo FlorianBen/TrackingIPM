@@ -37,10 +37,9 @@ jobs:
       uses: lukka/run-cmake@v2
       with:
         buildDirectory: ${{ runner.workspace }}/build/
-        cmakeAppendedArgs: >-
-          -G Ninja
+        cmakeAppendedArgs: '-G Ninja -DBUILD_TESTS=ON'
         cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
     
     - name: Run CTest
-      working-directory: '${{runner.workspace}}/build/'
+      working-directory: '${{runner.workspace}}/build/tests'
       run: ctest --output-on-failure       

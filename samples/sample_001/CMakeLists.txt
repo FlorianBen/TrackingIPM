@@ -5,8 +5,6 @@
 
 set(CLI_SRC ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
-find_package(TBB REQUIRED)
-
 add_executable(sample_001 ${CLI_SRC})
 
 target_link_libraries(
@@ -14,5 +12,4 @@ target_link_libraries(
   PRIVATE SpaceCharge::core
   PRIVATE SpaceCharge::io
   PRIVATE SpaceCharge::field
-  PRIVATE SpaceCharge::track
-  PRIVATE TBB::tbb)
+  PRIVATE SpaceCharge::track)

@@ -1,9 +1,9 @@
 #include "gtest/gtest.h"
 
-#include "SpaceCharge/particle.hpp"
-#include "SpaceCharge/fields.hpp"
-#include "SpaceCharge/bunch.hpp"
-#include "SpaceCharge/units.hpp"
+#include "SpaceCharge/core/particle.hpp"
+#include "SpaceCharge/field/fields.hpp"
+#include "SpaceCharge/field/bunch.hpp"
+#include "SpaceCharge/core/units.hpp"
 
 class FieldBunchTest : public ::testing::Test {
 
