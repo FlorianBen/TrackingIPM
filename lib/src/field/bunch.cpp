@@ -133,26 +133,6 @@ template <class T> void GaussianBunch<T>::setSigma(int index, T sigma) {
   updateSigma();
 }
 
-// template <class T>
-// void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 4, 1> pos) {
-//   this->pos = pos;
-//   updatePosition();
-// }
-
-// template <class T>
-// void GaussianBunch<T>::setPosition(Eigen::Matrix<T, 3, 1> pos) {
-//   this->pos.tail(3) = pos;
-//   updatePosition();
-// }
-
-// template <class T> void GaussianBunch<T>::setPosition(int index, T pos) {
-//   if ((index < 1) || (index > 3)) {
-//     return;
-//   }
-//   this->pos(index) = pos;
-//   updatePosition();
-// }
-
 template <class T> void GaussianBunch<T>::updateSigma() {
   this->sigma_ = (this->sigma).transpose() * (this->ltransform);
   switch (this->dir) {

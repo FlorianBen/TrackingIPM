@@ -27,7 +27,6 @@ set(CONAN
       STRING
       "conan options AUTO (conan must be in path), MANUAL (expects conanbuildinfo.cmake in build directory) or DISABLE"
 )
-#add_subdirectory(vendor/h5cpp)
 
 option(USE_MPI "Enable MPI support." OFF)
 
