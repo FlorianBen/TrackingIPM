@@ -31,7 +31,7 @@ jobs:
         uses: lukka/get-cmake@latest
 
       - name: Install system dependencies
-        run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev libtbb-dev
+        run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev libtbb-dev doxygen
 
       - name: "Set up Python"
         uses: actions/setup-python@v1
