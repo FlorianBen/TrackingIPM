@@ -226,6 +226,12 @@ public:
 
 template <class T> class FEMBunch : public Bunch<T> {};
 
+template <class T> class UniformBunch : public Bunch<T> {};
+
+template <class T> class LinearBunch : public Bunch<T> {};
+
+template <class T> class InverseRBunch : public Bunch<T> {};
+
 /**
  * \class gsl_function_pp bunch.hpp
  * \brief Helper class that wraps a lambda/functor into a GSL function.
