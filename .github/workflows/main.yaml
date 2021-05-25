@@ -6,9 +6,9 @@ name: CI
 # events but only for the master branch
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -19,27 +19,37 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-      with:
-        submodules: 'recursive'
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+          submodules: "recursive"
 
-    - name: Install build essential
-      run: sudo apt-get install build-essential
-      
-    - name: Install CMake
-      uses: lukka/get-cmake@latest
+      - name: Install build essential
+        run: sudo apt-get install build-essential
 
-    - name: Install system dependencies
-      run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev libtbb-dev
-      
-    - name: Configure & Build
-      uses: lukka/run-cmake@v2
-      with:
-        buildDirectory: ${{ runner.workspace }}/build/
-        cmakeAppendedArgs: '-G Ninja -DBUILD_TESTS=ON'
-        cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
-    
-    - name: Run CTest
-      working-directory: '${{runner.workspace}}/build/tests'
-      run: ctest --output-on-failure       
+      - name: Install CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Install system dependencies
+        run: sudo apt-get install libspdlog-dev libzstd-dev libblosc-dev libhdf5-dev libeigen3-dev libgsl-dev libboost-dev libtbb-dev
+
+      - name: "Set up Python"
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+
+      - name: "Install Python dependencies"
+        run: |
+          pip3 install setuptools
+          pip3 install sphinx sphinx-rtd-theme
+
+      - name: Configure & Build
+        uses: lukka/run-cmake@v2
+        with:
+          buildDirectory: ${{ runner.workspace }}/build/
+          cmakeAppendedArgs: "-G Ninja -DBUILD_TESTS=ON -DBUILD_DOC=ON"
+          cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
+
+      - name: Run CTest
+        working-directory: "${{runner.workspace}}/build/tests"
+        run: ctest --output-on-failure
