@@ -13,7 +13,7 @@ set(DOXYGEN_BUILTIN_STL_SUPPORT TRUE)
 set(DOXYGEN_GENERATE_XML TRUE)
 set(DOXYGEN_EXCLUDE_PATTERNS "nanoflann.hpp" "csv.hpp")
 
-doxygen_add_docs(libSpaceChargeDoc ${CMAKE_SOURCE_DIR}/include
+doxygen_add_docs(libSpaceChargeDoc ${CMAKE_SOURCE_DIR}/lib/include
                  "${CMAKE_SOURCE_DIR}/README.md")
 
 set(SPHINX_BUILD ${CMAKE_CURRENT_BINARY_DIR}/sphinx)
