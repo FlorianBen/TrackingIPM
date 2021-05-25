@@ -202,7 +202,7 @@ state_type2<T> GaussianBunch<T>::EMfieldAt(quadv<T> quad) const {
   quadv<T> pos = quad;
   quadv<T> pos_ = pos.transpose() * this->lboost;
 
-  auto factor = this->Qb / (2.0 * cst::eps0 * std::sqrt(cst::pi) * sigma0);
+  auto factor = this->Qb / (2.0 * cst::eps0 * std::sqrt(cst::pi) * sigma0) * this->particle.getCharge();
   auto axis = 0;
 
   auto fun = [&](T eps) -> T {
