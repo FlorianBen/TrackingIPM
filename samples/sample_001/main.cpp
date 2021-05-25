@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
                                       SpaceCharge::cst::lfactor::beta, 0.8);
 
   constexpr int nsize = 400;
-  constexpr int tsize = 800;
+  constexpr int tsize = 1600;
 
   auto step = 100.0e-3 / nsize;
   auto offset = -50e-3;

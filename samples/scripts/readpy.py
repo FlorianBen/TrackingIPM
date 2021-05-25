@@ -32,7 +32,7 @@ def main():
     ln.set_data(xdata, ydata)
     return ln,
 
-  ani = FuncAnimation(fig, update, frames=range(0, 800),
+  ani = FuncAnimation(fig, update, frames=range(0, 1600),
                       init_func=init, blit=False, interval=10)
   ani.save("movie.mp4")
 
