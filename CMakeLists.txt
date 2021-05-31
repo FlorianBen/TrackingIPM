@@ -44,9 +44,8 @@ if(${ENABLE_COVERAGE})
   set(COVERAGE_EXCLUDES
       "${PROJECT_SOURCE_DIR}/vendor/*"
       "${PROJECT_SOURCE_DIR}/tests/*"
-      "${PROJECT_SOURCE_DIR}/include/SpaceCharge/nanoflann.hpp"
-      "${PROJECT_SOURCE_DIR}/include/SpaceCharge/csv.hpp"
-      "${PROJECT_SOURCE_DIR}/temp/*"
+      "${PROJECT_SOURCE_DIR}/lib/include/SpaceCharge/nanoflann.hpp"
+      "${PROJECT_SOURCE_DIR}/lib/include/SpaceCharge/csv.hpp"
       "/usr/*"
       "/local/home/*/Libs/*")
   append_coverage_compiler_flags()
@@ -76,7 +75,7 @@ endif()
 
 if(${ENABLE_COVERAGE})
   setup_target_for_coverage_lcov(NAME coverage_spacecharge EXECUTABLE ctest
-                                 BASE_DIRECTORY "${PROJECT_SOURCE_DIR}/")
+                                 BASE_DIRECTORY "${PROJECT_SOURCE_DIR}")
 endif()
 
 # ##############################################################################
