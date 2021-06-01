@@ -4,8 +4,11 @@
 # Author: Florian Benedetti Date: 2020/03/12
 add_subdirectory(src/core)
 add_subdirectory(src/io)
+add_subdirectory(src/ionization)
 add_subdirectory(src/field)
 add_subdirectory(src/track)
+add_subdirectory(src/readout)
+
 
 configure_file("${PROJECT_SOURCE_DIR}/lib/include/SpaceCharge/config.hpp.in"
                "${PROJECT_SOURCE_DIR}/lib/include/SpaceCharge/config.hpp")
