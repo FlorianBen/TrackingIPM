@@ -32,6 +32,8 @@ option(USE_MPI "Enable MPI support." OFF)
 
 option(USE_HDF5_BLSOC "Enable BLOSC compression." OFF)
 
+option(USE_DEALII_FEM "Enable support for the deal.II finite element library" OFF)
+
 option(BUILD_DOC "Build doxygen documentation" OFF)
 
 option(BUILD_SAMPLES "Build the samples" ON)
