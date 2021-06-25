@@ -53,6 +53,8 @@ if(${ENABLE_COVERAGE})
   append_coverage_compiler_flags()
 endif()
 
+option(BUILD_BENCHS "Build the google benchmarks" OFF)
+
 # ##############################################################################
 # Add directories according to options
 # ##############################################################################
@@ -65,6 +67,10 @@ endif()
 
 if(BUILD_TESTS)
   add_subdirectory(tests)
+endif()
+
+if(BUILD_BENCHS)
+  add_subdirectory(benchs)
 endif()
 
 if(BUILD_DOC)
