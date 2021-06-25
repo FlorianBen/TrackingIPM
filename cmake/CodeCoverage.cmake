@@ -150,8 +150,8 @@ mark_as_advanced(
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(
-    WARNING
-      "Code coverage results with an optimised (non-Debug) build may be misleading"
+    INFO
+    "Code coverage results with an optimised (non-Debug) build may be misleading"
   )
 endif() # NOT CMAKE_BUILD_TYPE STREQUAL "Debug"
 
