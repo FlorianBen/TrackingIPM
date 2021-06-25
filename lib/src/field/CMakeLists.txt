@@ -5,6 +5,7 @@
 set(LIB_FIELD
     ${CMAKE_CURRENT_SOURCE_DIR}/bunch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/field_map.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/field_fdm.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/fields.cpp)
 
 set(HEADER_FIELD
