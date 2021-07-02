@@ -224,7 +224,7 @@ public:
   state_type2<T> transformFields(state_type2<T> fields) const;
 };
 
-template <class T> class FEMBunch : public Bunch<T> {};
+//template <class T> class FEMBunch : public Bunch<T> {};
 
 template <class T> class UniformBunch : public Bunch<T> {};
 

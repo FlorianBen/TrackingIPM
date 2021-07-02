@@ -41,7 +41,8 @@ target_link_libraries(
   PUBLIC GSL::gsl)
 
 if(USE_DEALII_FEM)
-  target_link_libraries(field PUBLIC ${DEAL_II_LIBS} MPI::MPI_CXX)
+  target_link_libraries(field PUBLIC MPI::MPI_CXX)
+  DEAL_II_SETUP_TARGET(field)
   target_include_directories(field PUBLIC ${DEAL_II_INCLUDE_DIRS})
 endif()
 
