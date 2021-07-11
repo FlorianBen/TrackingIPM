@@ -26,6 +26,7 @@ install(FILES ${HEADER_FIELD}
 # Dependencies
 find_package(TBB REQUIRED)
 find_package(GSL REQUIRED)
+find_package(OpenMP REQUIRED)
 if(USE_DEALII_FEM)
   find_package(MPI REQUIRED)
   find_package(deal.II REQUIRED)
@@ -38,6 +39,7 @@ target_link_libraries(
   field
   PUBLIC core
   PUBLIC TBB::tbb
+  PUBLIC OpenMP::OpenMP_CXX
   PUBLIC GSL::gsl)
 
 if(USE_DEALII_FEM)
