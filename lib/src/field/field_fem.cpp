@@ -1,4 +1,6 @@
 #include "SpaceCharge/field/field_fem.hpp"
+#include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/core/definitions.hpp"
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/logstream.h>
@@ -47,8 +49,10 @@ template <int dim>
 double RightHandSide<dim>::value(const Point<dim> &p,
                                  const unsigned int /*component*/) const {
   double return_value = 0.0;
-  for (unsigned int i = 0; i < dim; ++i)
-    return_value += 4.0 * std::pow(p(i), 4.0);
+  if (p.distance(Point<dim>(0)) < 0.003) {
+    return_value = 1.0 / SpaceCharge::cst::eps0;
+  }
+
   return return_value;
 }
 
@@ -59,39 +63,43 @@ double BoundaryValues<dim>::value(const Point<dim> &p,
 }
 
 template <int dim>
-FEMBunch<dim>::FEMBunch() : fe(1), dof_handler(triangulation) {}
+FEMBunch<dim>::FEMBunch() : fe(1), dof_handler(triangulation) {
+  Logger::GetLogger()->info("FEMBunch: Create {}D FEMBunch", dim);
+}
 
 template <> void FEMBunch<2>::make_grid() {
   const Point<2> center(0, 0);
-  const double inner_radius = 0.050, outer_radius = 0.125;
+  const double inner_radius = 0.025, outer_radius = 0.125;
   GridGenerator::hyper_ball_balanced(triangulation, center, outer_radius);
-  for (unsigned int step = 0; step < 2; ++step) {
+  for (unsigned int step = 0; step < 8; ++step) {
     for (auto &cell : triangulation.active_cell_iterators()) {
       for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v) {
         const double distance_from_center = center.distance(cell->vertex(v));
-        // if (distance_from_center < inner_radius) {
-        cell->set_refine_flag();
-        // break;
-        //}
+        if (distance_from_center < inner_radius) {
+          cell->set_refine_flag();
+          break;
+        }
       }
     }
     triangulation.execute_coarsening_and_refinement();
   }
+  Logger::GetLogger()->info("FEMBunch: {} total cells, {} active cells",
+                            triangulation.n_active_cells(),
+                            triangulation.n_cells());
 }
 
 template <> void FEMBunch<3>::make_grid() {
   GridGenerator::hyper_cube(triangulation, -1, 1);
   triangulation.refine_global(4);
-  std::cout << "   Number of active cells: " << triangulation.n_active_cells()
-            << std::endl
-            << "   Total number of cells: " << triangulation.n_cells()
-            << std::endl;
+  Logger::GetLogger()->info("FEMBunch: {} total cells, {} active cells",
+                            triangulation.n_active_cells(),
+                            triangulation.n_cells());
 }
 
 template <int dim> void FEMBunch<dim>::setup_system() {
   dof_handler.distribute_dofs(fe);
-  std::cout << "   Number of degrees of freedom: " << dof_handler.n_dofs()
-            << std::endl;
+  Logger::GetLogger()->info("FEMBunch: {} degrees of freedom",
+                            dof_handler.n_dofs());
   DynamicSparsityPattern dsp(dof_handler.n_dofs());
   DoFTools::make_sparsity_pattern(dof_handler, dsp);
   sparsity_pattern.copy_from(dsp);
@@ -145,8 +153,9 @@ template <int dim> void FEMBunch<dim>::solve() {
   SolverControl solver_control(1000, 1e-12);
   SolverCG<Vector<double>> solver(solver_control);
   solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
-  std::cout << "   " << solver_control.last_step()
-            << " CG iterations needed to obtain convergence." << std::endl;
+  Logger::GetLogger()->info(
+      "FEMBunch: {}  CG iterations needed to obtain convergence.",
+      solver_control.last_step());
 }
 
 template <int dim> void FEMBunch<dim>::output_results() const {
@@ -160,8 +169,6 @@ template <int dim> void FEMBunch<dim>::output_results() const {
 }
 
 template <int dim> void FEMBunch<dim>::run() {
-  std::cout << "Solving problem in " << dim << " space dimensions."
-            << std::endl;
   make_grid();
   setup_system();
   assemble_system();

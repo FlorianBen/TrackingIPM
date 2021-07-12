@@ -9,6 +9,7 @@
 #include "SpaceCharge/field/field_fem.hpp"
 
 int main(int argc, char *argv[]) {
+  SpaceCharge::Logger::Init();
 
   SpaceCharge::FEMBunch<2> field;
 
