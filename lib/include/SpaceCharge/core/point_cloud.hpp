@@ -96,7 +96,7 @@ template <class T> struct PointCloud {
   }
 };
 
-}; // namespace SpaceCharge
+} // namespace SpaceCharge
 
 namespace Eigen {
 template <class T>

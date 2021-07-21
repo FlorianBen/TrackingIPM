@@ -197,6 +197,6 @@ public:
   virtual state_type2<T> EMfieldAt(quadv<T> quad) const override;
 };
 
-}; // namespace SpaceCharge
+} // namespace SpaceCharge
 
 #endif
