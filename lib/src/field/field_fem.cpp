@@ -21,6 +21,8 @@
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <Eigen/Eigen>
+
 #include <fstream>
 #include <iostream>
 
@@ -31,13 +33,32 @@ protected:
   double current;
   double pulse_duration;
   double frequency;
-  Point<dim> sigma;
-  Point<dim> center;
+  Eigen::Matrix<double, dim, 1> center;
+  Eigen::Matrix<double, dim, dim> covar_m;
 
 public:
+  RightHandSide(Eigen::Matrix<double, dim, 1> center,
+                Eigen::Matrix<double, dim, dim> covar)
+      : center(center), covar_m(covar) {}
+
   virtual double value(const Point<dim> &p,
                        const unsigned int component = 0) const override;
 };
+
+template <int dim>
+double RightHandSide<dim>::value(const Point<dim> &p,
+                                 const unsigned int /*component*/) const {
+
+  Eigen::Matrix<double, dim, 1> point_v;
+  for (unsigned int i = 0; i < dim; ++i) {
+    point_v(i) = p(i);
+  }
+  double Z_term = std::sqrt((2 * cst::pi * covar_m).determinant());
+  double exp_term = std::exp(-0.5 * (point_v - center).transpose() *
+                             covar_m.inverse() * (point_v - center));
+  double f_value = (1.0 / Z_term) * exp_term;
+  return f_value / cst::eps0;
+}
 
 template <int dim> class BoundaryValues : public Function<dim> {
 public:
@@ -46,32 +67,53 @@ public:
 };
 
 template <int dim>
-double RightHandSide<dim>::value(const Point<dim> &p,
-                                 const unsigned int /*component*/) const {
-  double return_value = 0.0;
-  if (p.distance(Point<dim>(0)) < 0.003) {
-    return_value = 1.0 / SpaceCharge::cst::eps0;
-  }
-
-  return return_value;
-}
-
-template <int dim>
 double BoundaryValues<dim>::value(const Point<dim> &p,
                                   const unsigned int /*component*/) const {
   return 0;
 }
 
-template <int dim>
-FEMBunch<dim>::FEMBunch() : fe(1), dof_handler(triangulation) {
+template <int dim, class T>
+FEMBunch<dim, T>::FEMBunch(Particle<T> particle, T ib, T dt, cst::dir dir)
+    : Bunch<T>(particle, ib, dt, dir), fe(1), dof_handler(triangulation) {
   Logger::GetLogger()->info("FEMBunch: Create {}D FEMBunch", dim);
 }
 
-template <> void FEMBunch<2>::make_grid() {
+template <int dim, class T>
+FEMBunch<dim, T>::FEMBunch(int p_charge, T pmass, cst::lfactor factor,
+                           T lfactor_v, T ib, T dt, cst::dir dir)
+    : Bunch<T>(p_charge, pmass, factor, lfactor_v, ib, dt, dir), fe(1),
+      dof_handler(triangulation) {
+  Logger::GetLogger()->info("FEMBunch: Create {}D FEMBunch", dim);
+}
+
+template <int dim, class T>
+T FEMBunch<dim, T>::potentialAt(quadv<T> quad) const {
+  T temp = 0.0;
+  return temp;
+}
+
+template <int dim, class T>
+quadv<T> FEMBunch<dim, T>::EfieldAt(quadv<T> quad) const {
+  return EMfieldAt(quad)[0];
+}
+
+template <int dim, class T>
+quadv<T> FEMBunch<dim, T>::MagfieldAt(quadv<T> quad) const {
+  return EMfieldAt(quad)[1];
+}
+
+template <int dim, class T>
+state_type2<T> FEMBunch<dim, T>::EMfieldAt(quadv<T> quad) const {
+  quadv<T> E_{0.0, 0.0, 0.0, 0.0};
+  quadv<T> B_{0.0, 0.0, 0.0, 0.0};
+  return state_type2<T>{E_, B_};
+}
+
+template <int dim, class T> void FEMBunch<dim, T>::make_grid() {
   const Point<2> center(0, 0);
-  const double inner_radius = 0.025, outer_radius = 0.125;
+  const double inner_radius = 0.1, outer_radius = 0.125;
   GridGenerator::hyper_ball_balanced(triangulation, center, outer_radius);
-  for (unsigned int step = 0; step < 8; ++step) {
+  for (unsigned int step = 0; step < 7; ++step) {
     for (auto &cell : triangulation.active_cell_iterators()) {
       for (unsigned int v = 0; v < GeometryInfo<2>::vertices_per_cell; ++v) {
         const double distance_from_center = center.distance(cell->vertex(v));
@@ -88,15 +130,15 @@ template <> void FEMBunch<2>::make_grid() {
                             triangulation.n_cells());
 }
 
-template <> void FEMBunch<3>::make_grid() {
-  GridGenerator::hyper_cube(triangulation, -1, 1);
-  triangulation.refine_global(4);
-  Logger::GetLogger()->info("FEMBunch: {} total cells, {} active cells",
-                            triangulation.n_active_cells(),
-                            triangulation.n_cells());
-}
+// template <int dim, class T> void FEMBunch<3, T>::make_grid() {
+//   GridGenerator::hyper_cube(triangulation, -1, 1);
+//   triangulation.refine_global(4);
+//   Logger::GetLogger()->info("FEMBunch: {} total cells, {} active cells",
+//                             triangulation.n_active_cells(),
+//                             triangulation.n_cells());
+// }
 
-template <int dim> void FEMBunch<dim>::setup_system() {
+template <int dim, class T> void FEMBunch<dim, T>::setup_system() {
   dof_handler.distribute_dofs(fe);
   Logger::GetLogger()->info("FEMBunch: {} degrees of freedom",
                             dof_handler.n_dofs());
@@ -108,9 +150,14 @@ template <int dim> void FEMBunch<dim>::setup_system() {
   system_rhs.reinit(dof_handler.n_dofs());
 }
 
-template <int dim> void FEMBunch<dim>::assemble_system() {
+template <int dim, class T> void FEMBunch<dim, T>::assemble_system() {
   QGauss<dim> quadrature_formula(fe.degree + 1);
-  RightHandSide<dim> right_hand_side;
+  Eigen::Matrix<double, dim, 1> center;
+  center << .0, .0;
+  Eigen::Matrix<double, dim, dim> covar;
+  covar << .001, .0, .0, .001;
+
+  RightHandSide<dim> right_hand_side(center, covar);
   FEValues<dim> fe_values(fe, quadrature_formula,
                           update_values | update_gradients |
                               update_quadrature_points | update_JxW_values);
@@ -149,8 +196,8 @@ template <int dim> void FEMBunch<dim>::assemble_system() {
                                      system_rhs);
 }
 
-template <int dim> void FEMBunch<dim>::solve() {
-  SolverControl solver_control(1000, 1e-12);
+template <int dim, class T> void FEMBunch<dim, T>::solve() {
+  SolverControl solver_control(8000, 1e-12);
   SolverCG<Vector<double>> solver(solver_control);
   solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
   Logger::GetLogger()->info(
@@ -158,7 +205,7 @@ template <int dim> void FEMBunch<dim>::solve() {
       solver_control.last_step());
 }
 
-template <int dim> void FEMBunch<dim>::output_results() const {
+template <int dim, class T> void FEMBunch<dim, T>::output_results() const {
   DataOut<dim> data_out;
   data_out.attach_dof_handler(dof_handler);
   data_out.add_data_vector(solution, "solution");
@@ -168,7 +215,7 @@ template <int dim> void FEMBunch<dim>::output_results() const {
   data_out.write_vtk(output);
 }
 
-template <int dim> void FEMBunch<dim>::run() {
+template <int dim, class T> void FEMBunch<dim, T>::run() {
   make_grid();
   setup_system();
   assemble_system();
@@ -176,7 +223,7 @@ template <int dim> void FEMBunch<dim>::run() {
   output_results();
 }
 
-template class FEMBunch<2>;
-template class FEMBunch<3>;
+template class FEMBunch<2, double>;
+// template class FEMBunch<3, double>;
 
 } // namespace SpaceCharge

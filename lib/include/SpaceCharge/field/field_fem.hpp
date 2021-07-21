@@ -20,13 +20,52 @@
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include "SpaceCharge/field/bunch.hpp"
+
 namespace SpaceCharge {
 using namespace dealii;
 
-template <int dim> class FEMBunch {
+/**
+ * @brief This class compute the field of a bunch by using FEM.
+ *
+ * @tparam dim
+ */
+template <int dim, class T> class FEMBunch : public Bunch<T> {
 public:
-  FEMBunch();
+  FEMBunch(Particle<T> particle, T ib, T dt, cst::dir dir = cst::dir::z);
+  FEMBunch(int p_charge, T pmass, cst::lfactor factor, T lfactor_v, T ib, T dt,
+           cst::dir dir = cst::dir::z);
+  /**
+   * @brief Compute the model.
+   *
+   */
   void run();
+
+  /**
+   * \brief Calculate the Electrical potential at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical potential (\f$V\f$)
+   **/
+  T potentialAt(quadv<T> quad) const override;
+  /**
+   * \brief Calculate the Electrical field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Electrical field vector (\f$V/m\f$)
+   **/
+  quadv<T> EfieldAt(quadv<T> quad) const override;
+  /**
+   * \brief Calculate the Magnetic field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return Magnetic field vector (\f$T\f$)
+   **/
+  quadv<T> MagfieldAt(quadv<T> quad) const override;
+
+  /**
+   * \brief Calculate the EM field at the given time and space.
+   * \param[in] quad Time and space vector.
+   * \return EM field double vectors.
+   **/
+  state_type2<T> EMfieldAt(quadv<T> quad) const override;
 
 private:
   void make_grid();
