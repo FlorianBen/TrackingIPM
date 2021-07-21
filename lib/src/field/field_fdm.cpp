@@ -15,8 +15,6 @@ FieldFDM::FieldFDM(int nx, int ny, double dx, double dy)
 
 FieldFDM::~FieldFDM() {}
 
-void FieldFDM::initBoundary() {}
-
 void FieldFDM::initMatrix() {
   std::vector<Tri> coefficients_t;
   auto strip_size = 50;
@@ -76,26 +74,11 @@ void FieldFDM::initMatrix() {
 
   Logger::GetLogger()->info("Matrix init");
   mat.setFromTriplets(coefficients_t.begin(), coefficients_t.end());
-
-  // Logger::GetLogger()->info("Save fichier");
-  // std::ofstream file("mat.txt");
-  // if (file.is_open()) {
-  //   file << mat << std::endl;
-  // }
-  // std::cout << b << std::endl;
-  // Logger::GetLogger()->info("({}", b);
 }
 
 void FieldFDM::solve() {
   Logger::GetLogger()->info("FieldFDM: Solve system on {} thread",
                             Eigen::nbThreads());
-  // Eigen::SimplicialCholesky<SpMat> solver(
-  //    mat); // performs a Cholesky factorization of A
-  // Eigen::VectorXd x = chol.solve(b);
-  //, Eigen::RowMajor
-  // Eigen::ConjugateGradient<Eigen::SparseMatrix<double, Eigen::RowMajor>,
-  //                         Eigen::Lower | Eigen::Upper>
-  //    solver;
   Eigen::BiCGSTAB<SpMat> solver;
   solver.setTolerance(1e-6);
   solver.compute(mat);
