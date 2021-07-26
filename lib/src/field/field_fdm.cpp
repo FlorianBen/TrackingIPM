@@ -15,25 +15,54 @@ FieldFDM::FieldFDM(int nx, int ny, double dx, double dy)
 
 FieldFDM::~FieldFDM() {}
 
+void FieldFDM::readStrips(const std::string filepath) {
+  Logger::GetLogger()->info("FieldFDM: Load strip distribution from file.");
+  std::ifstream infile(filepath);
+  double a, b;
+  while (infile >> a >> b) {
+    std::pair<double, double> pair_corr{a * 1e-3 + 0.04, b * 1e-3 + 0.04};
+    strips_pairs.push_back(pair_corr);
+  }
+  for (auto pair : strips_pairs) {
+    int r1 = std::round(pair.first / dx);
+    int r2 = std::round(pair.second / dx);
+    // Logger::GetLogger()->info("{} <> {}", r1, r2);
+  }
+}
+
+bool FieldFDM::isStrips(const int i, int &stripnb) {
+  auto ind = 0;
+  for (auto pair : strips_pairs) {
+    int r1 = std::round(pair.first / dx);
+    int r2 = std::round(pair.second / dx);
+    if (r1 <= i && i <= r2) {
+      stripnb = ind;
+      return true;
+    }
+    ind++;
+  }
+  return false;
+}
+
 void FieldFDM::initMatrix() {
   std::vector<Tri> coefficients_t;
   auto strip_size = 50;
+  auto strip_on = 9;
+  auto strip_nb = 0;
   for (auto j = 0; j < ny; j++) {
     for (auto i = 0; i < nx; i++) {
       auto indl = gindex(i, j);
       if (j == 0) {
-        if ((i < strip_size) || (i > (nx - strip_size))) {
-          b(indl) = 0;
+        if (isStrips(i, strip_nb)) {
+          if (strip_on == strip_nb) {
+            b(indl) = 1;
+
+          } else {
+            b(indl) = 0;
+          }
+
           coefficients_t.push_back(Tri(indl, indl, 1));
-        } else if (((i > nx / 2 - strip_size) && (i < nx / 2 + strip_size))) {
-          b(indl) = 1;
-          coefficients_t.push_back(Tri(indl, indl, 1));
-        } else if (((i > nx / 4 - strip_size) && (i < nx / 4 + strip_size))) {
-          b(indl) = 0;
-          coefficients_t.push_back(Tri(indl, indl, 1));
-        } else if (((i > 3 * nx / 4 - strip_size) && (i < 3 * nx / 4 + strip_size))) {
-          b(indl) = 0;
-          coefficients_t.push_back(Tri(indl, indl, 1));
+
         } else {
           b(indl) = 0;
           coefficients_t.push_back(Tri(indl, gindex(i - 1, j), 1.0 / 2));
@@ -72,7 +101,7 @@ void FieldFDM::initMatrix() {
     }
   }
 
-  Logger::GetLogger()->info("Matrix init");
+  Logger::GetLogger()->info("FieldFDM: Matrix initialization");
   mat.setFromTriplets(coefficients_t.begin(), coefficients_t.end());
 }
 
@@ -80,7 +109,7 @@ void FieldFDM::solve() {
   Logger::GetLogger()->info("FieldFDM: Solve system on {} thread",
                             Eigen::nbThreads());
   Eigen::BiCGSTAB<SpMat> solver;
-  solver.setTolerance(1e-6);
+  solver.setTolerance(1e-9);
   solver.compute(mat);
   x = solver.solve(b);
   Logger::GetLogger()->info("FieldFDM: Solving done in {} iterations, error {}",
@@ -88,7 +117,7 @@ void FieldFDM::solve() {
 }
 
 void FieldFDM::save(std::string filename) {
-  Logger::GetLogger()->info("Save matrix in {}", filename);
+  Logger::GetLogger()->info("FieldFDM: Save matrix in {}", filename);
   std::ofstream file(filename);
   if (file.is_open()) {
     file << x << std::endl;

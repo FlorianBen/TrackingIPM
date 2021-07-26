@@ -4,10 +4,10 @@
 #include <Eigen/Eigen>
 
 namespace SpaceCharge {
-  /**
-   * @brief 
-   * 
-   */
+/**
+ * @brief
+ *
+ */
 class FieldFDM {
   typedef Eigen::SparseMatrix<double, Eigen::RowMajor> SpMat;
   typedef Eigen::Triplet<double> Tri;
@@ -25,7 +25,13 @@ private:
   Eigen::VectorXd b;
   Eigen::VectorXd x;
 
+  std::vector<std::pair<double, double>> strips_pairs;
+
   int gindex(int i, int j);
+
+  void initStrips();
+
+  bool isStrips(const int i, int &stripnb);
 
 public:
   /**
@@ -39,20 +45,22 @@ public:
   FieldFDM(int nx, int ny, double dx, double dy);
   ~FieldFDM();
 
+  void readStrips(const std::string filepath);
+
   /**
    * @brief Initialize the FDM matrix.
-   * 
+   *
    */
   void initMatrix();
   /**
    * @brief Solve the the FDM problem.
-   * 
+   *
    */
   void solve();
 
   /**
    * @brief Export field to file.
-   * 
+   *
    * @param filename Filename.
    */
   void save(std::string filename);
