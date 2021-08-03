@@ -5,6 +5,7 @@
 #include <tbb/concurrent_vector.h>
 #include <tbb/parallel_for.h>
 
+#include "SpaceCharge/core/alogger.hpp"
 #include "SpaceCharge/field/fields.hpp"
 #include "SpaceCharge/core/particle.hpp"
 #include "SpaceCharge/field/bunch.hpp"
@@ -12,6 +13,8 @@
 double kernel(double distance, double n) { return exp(-pow(n * distance, 2)); }
 
 int main(int argc, char *argv[]) {
+  SpaceCharge::Logger::Init();
+
   typedef Eigen::Matrix<double, 4, 1> quadv;
   using namespace boost::numeric::odeint;
 
@@ -42,7 +45,7 @@ int main(int argc, char *argv[]) {
   std::uniform_real_distribution<double> pos_z(-0.012, 0.012);
   std::normal_distribution<double> pos_t(-2e-12, 2e-12);
 
-  auto nb_part = 50000;
+  auto nb_part = 500;
   tbb::concurrent_vector<quadv> pos(nb_part);
   tbb::concurrent_vector<SpaceCharge::state_type2<double>> results_vc;
 

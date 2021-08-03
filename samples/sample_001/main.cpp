@@ -5,6 +5,7 @@
 #include "field_h5.hpp"
 #include "vector.hpp"
 
+#include "SpaceCharge/core/alogger.hpp"
 #include "SpaceCharge/field/fields.hpp"
 #include "SpaceCharge/field/bunch.hpp"
 #include "SpaceCharge/core/particle.hpp"
@@ -13,6 +14,8 @@ bool save_data(Field &fieldv, std::vector<float> &time);
 
 int main(int argc, char *argv[]) {
   /* code */
+  SpaceCharge::Logger::Init();
+
   SpaceCharge::Particle<double> part("proton", 1, SpaceCharge::cst::mproton,
                                      SpaceCharge::cst::lfactor::beta, 0.5);
 
