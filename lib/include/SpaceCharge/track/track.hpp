@@ -65,6 +65,10 @@ public:
    **/
   const quadv<T> *data() const;
 
+  const std::vector<quadv<T>> &getPosVector() const;
+
+  const std::vector<quadv<T>> &getSpeedVector() const;
+
   /**
    * \brief Get the size of the track.
    * \return Track size.
