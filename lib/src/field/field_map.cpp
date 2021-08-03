@@ -31,6 +31,16 @@ template <typename T> const quadv<T> *FieldMap<T>::data() const {
   return data_.data();
 }
 
+template <typename T>
+quadv<T> FieldMap<T>::operator()(size_t x, size_t y, size_t z) const {
+  return data_[z + x * nz() + y * nx() * nz()];
+}
+
+template <typename T>
+quadv<T> &FieldMap<T>::operator()(size_t x, size_t y, size_t z) {
+  return data_[z + x * nz() + y * nx() * nz()];
+}
+
 template <typename T> void FieldMap<T>::addField(FieldSP<T> &field) {
   input_fields.push_back(std::move(field));
 }

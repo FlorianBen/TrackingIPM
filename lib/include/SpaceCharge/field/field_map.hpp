@@ -81,6 +81,22 @@ public:
    */
   void addField(FieldSP<T> &field);
 
+  /**
+   * \brief Operator () read overload.
+   * \param[in] x Index x.
+   * \param[in] y Index y.
+   * \param[in] z Index z.
+   */
+  quadv<T> operator()(size_t x, size_t y, size_t z) const;
+
+  /**
+   * \brief Operator () write overload.
+   * \param[in] x Index x.
+   * \param[in] y Index y.
+   * \param[in] z Index z.
+   */
+  quadv<T> &operator()(size_t x, size_t y, size_t z);
+
   void computeField();
 
   void computePot();
