@@ -21,32 +21,6 @@ public:
   }
 };
 
-template <typename T> class TypeTrait<SpaceCharge::state_type2<T>> {
-public:
-  using Type = SpaceCharge::state_type2<T>;
-  using TypeClass = Compound;
-
-  static TypeClass create(const Type & = Type()) {
-    Compound type = Compound::create(sizeof(Type));
-    type.insert("V", 0, TypeTrait<SpaceCharge::quadv<T>>::create());
-    type.insert("Vp", sizeof(T) * 4, TypeTrait<SpaceCharge::quadv<T>>::create());
-    return type;
-  }
-};
-
-// template <typename T> class TypeTrait<T> {
-// public:
-//   using Type = T;
-//   using TypeClass = Compound;
-
-//   static TypeClass create(const Type & = Type()) {
-//     datatype::Compound type =
-//         datatype::Compound::create(sizeof(AstroSYCL::core::MonoPixel<T>));
-//     type.insert("V", 0, datatype::create<T>());
-//     return type;
-//   }
-// };
-
 } // namespace datatype
 } // namespace hdf5
 
