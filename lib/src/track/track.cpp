@@ -2,8 +2,8 @@
 #include <thread>
 
 #include "SpaceCharge/core/alogger.hpp"
-#include "SpaceCharge/io/blosc_filter.h"
 #include "SpaceCharge/core/definitions.hpp"
+#include "SpaceCharge/io/blosc_filter.h"
 #include "SpaceCharge/track/track.hpp"
 
 namespace SpaceCharge {
@@ -11,9 +11,7 @@ namespace SpaceCharge {
 template <class T>
 Track<T>::Track()
     : particle("proton", 1, SpaceCharge::cst::mproton,
-           SpaceCharge::cst::lfactor::beta, 0.5) {
-
-           }
+               SpaceCharge::cst::lfactor::beta, 0.5) {}
 
 template <class T>
 Track<T>::Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,

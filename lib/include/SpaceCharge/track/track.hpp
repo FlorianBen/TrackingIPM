@@ -3,9 +3,9 @@
 
 #include <filesystem>
 
-#include "SpaceCharge/field/fields.hpp"
 #include "SpaceCharge/core/particle.hpp"
 #include "SpaceCharge/core/point_cloud.hpp"
+#include "SpaceCharge/field/fields.hpp"
 
 namespace SpaceCharge {
 
