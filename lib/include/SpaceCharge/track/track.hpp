@@ -23,8 +23,7 @@ private:
   quadv<T> pos0;
   quadv<T> v0;
 
-  std::vector<state_type2<T>> states;
-  std::vector<quadv<T>> pos;
+  std::vector<quadv<T>> pos, speed;
   std::vector<T> times;
 
   FieldSPS<T> fieldmanager;
