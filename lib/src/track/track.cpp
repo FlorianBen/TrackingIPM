@@ -42,7 +42,9 @@ template <class T> void Track<T>::track() {
     if (filter(x[0])) {
       times.push_back(t);
       x[0](0) = t;
+      x[1](0) = t;
       pos.push_back(x[0]);
+      speed.push_back(x[1]);
     }
   };
 
