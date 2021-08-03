@@ -11,11 +11,10 @@ FieldMap<T>::FieldMap()
       qoffset(quadv<T>{.0, .0, .0, .0}), time(.0), data_(0) {}
 
 template <typename T>
-FieldMap<T>::FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset, T time)
-    : qsize(size), qstep(step), qoffset(offset),
-      data_(qsize(1) * qsize(2) * qsize(3)), time(.0) {
-
-      };
+FieldMap<T>::FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset,
+                      T time)
+    : qsize(size), qstep(step), qoffset(offset), time(.0),
+      data_(qsize(1) * qsize(2) * qsize(3)) {}
 
 template <typename T> size_t FieldMap<T>::size() const { return data_.size(); }
 

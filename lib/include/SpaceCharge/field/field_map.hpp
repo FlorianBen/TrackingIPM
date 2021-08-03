@@ -19,7 +19,6 @@ private:
   quadv<T> qstep;
   quadv<T> qoffset;
   T time;
-
   std::vector<quadv<T>> data_;
   std::vector<FieldSP<T>> input_fields;
 
