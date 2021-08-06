@@ -41,7 +41,7 @@ option(BUILD_SAMPLES "Build the samples" ON)
 option(BUILD_TESTS "Build the google tests" OFF)
 
 option(ENABLE_COVERAGE "Enable coverage report" OFF)
-if(${ENABLE_COVERAGE})
+if((${ENABLE_COVERAGE}) AND (${CMAKE_BUILD_TYPE} EQUAL "DEBUG"))
   include(CodeCoverage)
   set(COVERAGE_EXCLUDES
       "${PROJECT_SOURCE_DIR}/vendor/*"
@@ -51,6 +51,8 @@ if(${ENABLE_COVERAGE})
       "/usr/*"
       "/local/home/*/Libs/*")
   append_coverage_compiler_flags()
+else()
+  message(WARNING "Code coverage disabled with Release builds.")
 endif()
 
 option(BUILD_BENCHS "Build the google benchmarks" OFF)
@@ -81,7 +83,7 @@ endif()
 # Coverage report
 # ##############################################################################
 
-if(${ENABLE_COVERAGE})
+if((${ENABLE_COVERAGE}) AND (${CMAKE_BUILD_TYPE} EQUAL "DEBUG"))
   setup_target_for_coverage_lcov(NAME coverage_spacecharge EXECUTABLE ctest
                                  BASE_DIRECTORY "${PROJECT_SOURCE_DIR}")
 endif()
