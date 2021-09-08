@@ -53,6 +53,11 @@ public:
   void track();
 
   /**
+   * \brief Run the boris tracking.
+   **/
+  void track2();
+
+  /**
    * \brief Get the raw data vector.
    * \return data pointer.
    **/

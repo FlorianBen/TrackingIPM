@@ -50,6 +50,8 @@ template <class T> void Track<T>::track() {
   integrate_const(stepper, lorentz, init, 0.0, 3e-9, 0.001e-9, observer);
 }
 
+template <class T> void Track<T>::track2(){};
+
 template <typename T>
 const std::vector<quadv<T>> &Track<T>::getPosVector() const {
   return pos;
