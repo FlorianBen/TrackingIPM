@@ -6,12 +6,12 @@
 #include <tbb/parallel_for.h>
 
 #include "SpaceCharge/core/alogger.hpp"
-#include "SpaceCharge/field/bunch.hpp"
-#include "SpaceCharge/field/fields.hpp"
 #include "SpaceCharge/core/particle.hpp"
 #include "SpaceCharge/core/point_cloud.hpp"
-#include "SpaceCharge/track/track.hpp"
+#include "SpaceCharge/field/bunch.hpp"
+#include "SpaceCharge/field/fields.hpp"
 #include "SpaceCharge/io/track_h5.hpp"
+#include "SpaceCharge/track/track.hpp"
 
 int main(int argc, char *argv[]) {
   SpaceCharge::Logger::Init();
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
       "proton", 1, 1.0 * SpaceCharge::cst::mproton,
       SpaceCharge::cst::lfactor::beta, 0.5);
   SpaceCharge::Particle<double> part_track(
-      "electron", -1, 1.0 * SpaceCharge::cst::melectron,
+      "electron", -1, 1.0 * SpaceCharge::cst::mproton,
       SpaceCharge::cst::lfactor::beta, 0.5);
 
   std::default_random_engine g1(0);
@@ -40,34 +40,35 @@ int main(int argc, char *argv[]) {
   SpaceCharge::quadv<double> offset;
   offset << 0.0, 0.0, 0.0, 0.206;
 
-  // SpaceCharge::FieldSP<double> Fep =
-  //     std::make_unique<SpaceCharge::CSVFileEMField<double>>();
-  // static_cast<SpaceCharge::CSVFileEMField<double> *>(Fep.get())->loadEfield(
-  //     "DataRaw.csv", offset);
-
-  SpaceCharge::quadv<double> Ecst{0.0, 3.0e5, 0.0, 0.0};
-  SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
-  SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
   SpaceCharge::FieldSP<double> Fep =
-      std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
+      std::make_unique<SpaceCharge::CSVFileEMField<double>>();
+  static_cast<SpaceCharge::CSVFileEMField<double> *>(Fep.get())->loadEfield(
+      "DataRaw.csv", offset);
+
+  //   SpaceCharge::quadv<double> Ecst{0.0, 3.0e5, 0.0, 0.0};
+  //   SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
+  //   SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
+  //   SpaceCharge::FieldSP<double> Fep =
+  //       std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
 
   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
       ->addField(Fep);
 
-  std::unique_ptr<SpaceCharge::Bunch<double>> bunch2(
-      new SpaceCharge::GaussianBunch<double>(
-          part_bunch, 62.5 * SpaceCharge::uni::milli,
-          1.0 / (352.0 * SpaceCharge::uni::mega), SpaceCharge::cst::dir::z));
-  SpaceCharge::FieldSP<double> field_bunch =
-      std::make_unique<SpaceCharge::BunchEMField<double>>();
-  static_cast<SpaceCharge::BunchEMField<double> *>(field_bunch.get())
-      ->usePeriodicity(true);
-  static_cast<SpaceCharge::BunchEMField<double> *>(field_bunch.get())
-      ->addBunch(std::move(bunch2));
-  static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
-      ->addField(field_bunch);
+  //   std::unique_ptr<SpaceCharge::Bunch<double>> bunch2(
+  //       new SpaceCharge::GaussianBunch<double>(
+  //           part_bunch, 62.5 * SpaceCharge::uni::milli,
+  //           1.0 / (352.0 * SpaceCharge::uni::mega),
+  //           SpaceCharge::cst::dir::z));
+  //   SpaceCharge::FieldSP<double> field_bunch =
+  //       std::make_unique<SpaceCharge::BunchEMField<double>>();
+  //   static_cast<SpaceCharge::BunchEMField<double> *>(field_bunch.get())
+  //       ->usePeriodicity(true);
+  //   static_cast<SpaceCharge::BunchEMField<double> *>(field_bunch.get())
+  //       ->addBunch(std::move(bunch2));
+  //   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
+  //       ->addField(field_bunch);
 
-  auto nb_part = 20000;
+  auto nb_part = 1000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
@@ -113,9 +114,13 @@ int main(int argc, char *argv[]) {
     node::Group group =
         root_group.create_group("track_" + std::to_string(i++), lcpl);
     auto dset = group.create_dataset(
-        "pos", datatype::create<SpaceCharge::Track<double>>(),
-        dataspace::create(track), dcpl, lcpl);
-    dset.write(track);
+        "pos", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+        dataspace::create(track.getPosVector()), dcpl, lcpl);
+    dset.write(track.getPosVector());
+    auto dset_speed = group.create_dataset(
+        "speed", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+        dataspace::create(track.getSpeedVector()), dcpl, lcpl);
+    dset_speed.write(track.getSpeedVector());
   }
 
   SC_INFO("Saving done");

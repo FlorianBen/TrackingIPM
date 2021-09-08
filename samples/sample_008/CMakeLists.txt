@@ -12,7 +12,8 @@ target_link_libraries(
   PRIVATE SpaceCharge::core
   PRIVATE SpaceCharge::io
   PRIVATE SpaceCharge::field
-  PRIVATE SpaceCharge::track)
+  PRIVATE SpaceCharge::track
+  PRIVATE SpaceCharge::readout)
 
 add_custom_command(
   TARGET sample_008
