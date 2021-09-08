@@ -5,12 +5,12 @@
 set(LIB_READOUT
     ${CMAKE_CURRENT_SOURCE_DIR}/ramo.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/readout.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/strips.cpp)
+    ${CMAKE_CURRENT_SOURCE_DIR}/strips_plane.cpp)
 
 set(READOUT_HEADER
     ${CMAKE_SOURCE_DIR}/lib/include/SpaceCharge/readout/ramo.hpp
     ${CMAKE_SOURCE_DIR}/lib/include/SpaceCharge/readout/readout.hpp
-    ${CMAKE_SOURCE_DIR}/lib/include/SpaceCharge/readout/strips.hpp)
+    ${CMAKE_SOURCE_DIR}/lib/include/SpaceCharge/readout/strips_plane.hpp)
 
 install(FILES ${READOUT_HEADER}
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SpaceCharge/readout)
