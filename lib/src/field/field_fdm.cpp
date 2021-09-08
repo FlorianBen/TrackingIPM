@@ -25,6 +25,7 @@ void FieldFDM::readStrips(const std::string filepath) {
     std::pair<double, double> pair_corr{a * 1e-3 + 0.04, b * 1e-3 + 0.04};
     strips_pairs.push_back(pair_corr);
   }
+  total_strip = strips_pairs.size();
 }
 
 bool FieldFDM::isStrips(const int i, int &stripnb) {

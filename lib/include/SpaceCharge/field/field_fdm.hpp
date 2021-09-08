@@ -3,6 +3,8 @@
 
 #include <Eigen/Eigen>
 
+#include "SpaceCharge/field/field_map.hpp"
+
 namespace SpaceCharge {
 /**
  * @brief
@@ -21,13 +23,15 @@ private:
   double dy;
   double t;
 
+  int total_strip;
+
   SpMat mat;
   Eigen::VectorXd b;
   Eigen::VectorXd x;
 
   std::vector<std::pair<double, double>> strips_pairs;
 
-  int gindex(int i, int j);
+  int gindex(int i, int j) const;
 
   void initStrips();
 
@@ -57,6 +61,10 @@ public:
    *
    */
   void solve();
+
+  void fillFieldMap(FieldMap<double> &fieldmap) const;
+
+  void fillFieldMap2(FieldMap<double> &fieldmap) const;
 
   /**
    * @brief Export field to file.
