@@ -37,7 +37,7 @@ build/**
 .vscode/**
 
 # Temp
-proto/**
+protopy/**
 temp/**
 *.h5
 config.hpp
