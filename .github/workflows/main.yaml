@@ -47,7 +47,7 @@ jobs:
         uses: lukka/run-cmake@v2
         with:
           buildDirectory: ${{ runner.workspace }}/build/
-          cmakeAppendedArgs: "-G Ninja -DBUILD_TESTS=ON -DBUILD_DOC=ON"
+          cmakeAppendedArgs: "-G Ninja -DBUILD_TESTS=ON -DBUILD_DOC=ON -DENABLE_COVERAGE=ON"
           cmakeListsOrSettingsJson: CMakeListsTxtAdvanced
 
       - name: Run CTest

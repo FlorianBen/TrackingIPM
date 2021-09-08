@@ -41,7 +41,7 @@ option(BUILD_SAMPLES "Build the samples" ON)
 option(BUILD_TESTS "Build the google tests" OFF)
 
 option(ENABLE_COVERAGE "Enable coverage report" OFF)
-if((${ENABLE_COVERAGE}) AND (${CMAKE_BUILD_TYPE} EQUAL "DEBUG"))
+if(("${ENABLE_COVERAGE}") AND ("${CMAKE_BUILD_TYPE}" EQUAL "DEBUG"))
   include(CodeCoverage)
   set(COVERAGE_EXCLUDES
       "${PROJECT_SOURCE_DIR}/vendor/*"
