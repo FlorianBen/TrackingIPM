@@ -83,7 +83,7 @@ endif()
 # Coverage report
 # ##############################################################################
 
-if((${ENABLE_COVERAGE}) AND (${CMAKE_BUILD_TYPE} EQUAL "DEBUG"))
+if(("${ENABLE_COVERAGE}") AND ("${CMAKE_BUILD_TYPE}" EQUAL "DEBUG"))
   setup_target_for_coverage_lcov(NAME coverage_spacecharge EXECUTABLE ctest
                                  BASE_DIRECTORY "${PROJECT_SOURCE_DIR}")
 endif()
