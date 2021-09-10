@@ -12,3 +12,5 @@ if(USE_DEALII_FEM)
   add_subdirectory(sample_007)
 endif()
 add_subdirectory(sample_008)
+add_subdirectory(sample_009)
+
