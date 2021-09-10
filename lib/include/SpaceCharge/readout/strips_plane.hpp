@@ -85,6 +85,13 @@ public:
    */
   double getGapY() const;
 
+  /**
+   * @brief Get the number of strips.
+   * 
+   * @return size_t Number of strips
+   */
+  size_t getNbStrips() const;
+
 private:
   int nx;
   int ny;

@@ -8,6 +8,7 @@
 // TODO: Implement dim gap independant version.
 // TODO: Add a way to select Eigen solver.
 // TODO: Add a templated version.
+// TODO: Better documentation.
 
 namespace SpaceCharge {
 
@@ -97,6 +98,8 @@ size_t StripsPlane::getSizeY() const { return ny; }
 double StripsPlane::getGapX() const { return dx; }
 
 double StripsPlane::getGapY() const { return dy; }
+
+size_t StripsPlane::getNbStrips() const { return total_strips; }
 
 // PRIVATE METHODS
 
