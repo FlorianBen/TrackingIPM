@@ -20,6 +20,71 @@ class StripsPlane {
   typedef Eigen::SparseMatrix<double, Eigen::RowMajor> SpMat;
   typedef Eigen::Triplet<double> Tri;
 
+public:
+  /**
+   * @brief Construct a new Strips Plane object according to a file.
+   *
+   * @param filename The text file that contains the strips positions.
+   */
+  StripsPlane(const std::string filename);
+
+  /**
+   * @brief Construct a new Strips Plane object according to a file.
+   * This constructor allows to specify the size of the 2D grid using quad
+   * vector (t,x,y,z). Only x,y size are revelant.
+   * @param filename The text file that contains the strips positions.
+   * @param sizes The quadvector size.
+   */
+  StripsPlane(const std::string filename,
+              const SpaceCharge::quadv<size_t> sizes);
+
+  /**
+   * @brief Solve the the Ramo problem on the given strip.
+   * @param strip Strip to set at 1V.
+   */
+  void solvePotential(const int strip);
+
+  /**
+   * @brief Get the computed potential on the grid.
+   * This method will transfert the computed potential into a given FieldMap
+   * object.
+   * @param fieldmap Input FieldMap object.
+   * @param zindex Offset in the FieldMap object.
+   */
+  void getPotential(FieldMap<double> &fieldmap, int zindex = 0) const;
+
+  /**
+   * @brief Get the computed potential on the grid.
+   * This method will transfert the computed potential into a given FieldMap
+   * object.
+   * @param fieldmap Input FieldMap object.
+   * @param zindex Offset in the FieldMap object.
+   */
+  void getField(FieldMap<double> &fieldmap, int zindex = 0) const;
+
+  /**
+   * @brief Get the X size of the grid.
+   *
+   */
+  size_t getSizeX() const;
+  /**
+   * @brief Get the X size of the grid.
+   *
+   */
+  size_t getSizeY() const;
+
+  /**
+   * @brief Get the X gap size of the grid.
+   *
+   */
+  double getGapX() const;
+
+  /**
+   * @brief Get the X gap size of the grid.
+   *
+   */
+  double getGapY() const;
+
 private:
   int nx;
   int ny;
@@ -48,24 +113,6 @@ private:
   void solve();
   bool isStrips(const int i, int &stripnb) const;
   int gindex(int i, int j) const;
-
-public:
-  /**
-   * @brief Construct a new Strips Plane object according to a file.
-   *
-   * @param filename The text file that contains the strips positions.
-   */
-  StripsPlane(const std::string filename);
-
-  /**
-   * @brief Solve the the FDM problem.
-   *
-   */
-  void solvePotential(const int strip);
-
-  void getPotential(FieldMap<double> &fieldmap) const;
-
-  void getField(FieldMap<double> &fieldmap) const;
 };
 
 } // namespace SpaceCharge
