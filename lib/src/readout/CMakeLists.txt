@@ -24,6 +24,8 @@ add_library(SpaceCharge::readout ALIAS readout)
 
 target_link_libraries(
   readout
+  PUBLIC core
+  PUBLIC track
   PUBLIC spdlog::spdlog
   PUBLIC Eigen3::Eigen)
 
