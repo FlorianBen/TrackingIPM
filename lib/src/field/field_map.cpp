@@ -5,6 +5,9 @@
 
 namespace SpaceCharge {
 
+// TODO: Refactor to Grid.
+// TODO: Split into different class like GridCreator etc...
+
 template <typename T>
 FieldMap<T>::FieldMap()
     : qsize(quadv<size_t>{0, 0, 0, 0}), qstep(quadv<T>{.0, .0, .0, .0}),
