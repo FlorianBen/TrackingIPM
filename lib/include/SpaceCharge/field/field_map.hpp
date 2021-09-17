@@ -45,6 +45,24 @@ public:
   size_t size() const;
 
   /**
+   * \brief Get the dim size of the fieldmap.
+   * \return Dim size.
+   **/
+  quadv<size_t> sizes() const;  
+
+  /**
+   * \brief Get the steps of the fieldmap.
+   * \return Dim size.
+   **/
+  quadv<T> steps() const; 
+
+  /**
+   * \brief Get the offsets of the fieldmap.
+   * \return Dim size.
+   **/
+  quadv<T> offsets() const; 
+
+  /**
    * \brief Get the x size of the fieldmap.
    * \return x size.
    **/

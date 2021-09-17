@@ -18,6 +18,12 @@ FieldMap<T>::FieldMap(quadv<size_t> size, quadv<T> step, quadv<T> offset,
 
 template <typename T> size_t FieldMap<T>::size() const { return data_.size(); }
 
+template <typename T> quadv<size_t> FieldMap<T>::sizes() const { return qsize; }
+
+template <typename T> quadv<T> FieldMap<T>::steps() const { return qstep; }
+
+template <typename T> quadv<T> FieldMap<T>::offsets() const { return qoffset; }
+
 template <typename T> size_t FieldMap<T>::nx() const { return qsize(1); }
 
 template <typename T> size_t FieldMap<T>::ny() const { return qsize(2); }
