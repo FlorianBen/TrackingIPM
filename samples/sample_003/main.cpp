@@ -16,18 +16,19 @@
 int main(int argc, char *argv[]) {
   SpaceCharge::Logger::Init();
 
-  SC_INFO("TEST file 3");
-
+  // Create two particles. Each can be easily modified by changing the
+  // constructor arguments.
   SpaceCharge::Particle<double> part_bunch(
-      "proton", 1, 1.0 * SpaceCharge::cst::mproton,
+      "proton", 1, 1.0 * SpaceCharge::cst::melectron,
       SpaceCharge::cst::lfactor::beta, 0.5);
   SpaceCharge::Particle<double> part_track(
-      "electron", -1, 1.0 * SpaceCharge::cst::mproton,
+      "electron", -1, 1.0 * SpaceCharge::cst::melectron,
       SpaceCharge::cst::lfactor::beta, 0.5);
 
-  std::default_random_engine g1(0);
-  std::normal_distribution<double> pos_x(0.0, 3e-3);
-  std::normal_distribution<double> pos_y(0.0, 3e-3);
+  // Setup the random number generator.
+  std::default_random_engine g1(0);                  // use always same 0 seed.
+  std::normal_distribution<double> pos_x(0.0, 3e-3); // pos x distribution
+  std::normal_distribution<double> pos_y(0.0, 3e-3); // pos y distribution
   std::uniform_real_distribution<double> pos_z(-0.012, 0.012);
   std::normal_distribution<double> pos_t(-2e-12, 2e-12);
 
@@ -45,11 +46,11 @@ int main(int argc, char *argv[]) {
   static_cast<SpaceCharge::CSVFileEMField<double> *>(Fep.get())->loadEfield(
       "DataRaw.csv", offset);
 
-  //   SpaceCharge::quadv<double> Ecst{0.0, 3.0e5, 0.0, 0.0};
-  //   SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
-  //   SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
-  //   SpaceCharge::FieldSP<double> Fep =
-  //       std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
+  // SpaceCharge::quadv<double> Ecst{0.0, 3.0e5, 0.0, 0.0};
+  // SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
+  // SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
+  // SpaceCharge::FieldSP<double> Fep =
+  //     std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
 
   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
       ->addField(Fep);
@@ -68,7 +69,7 @@ int main(int argc, char *argv[]) {
   //   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
   //       ->addField(field_bunch);
 
-  auto nb_part = 1000;
+  auto nb_part = 10000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
