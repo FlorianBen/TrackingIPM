@@ -8,6 +8,9 @@
 
 namespace SpaceCharge {
 
+// TODO: Add custom stepper.
+// TODO: Add stepper options or configuration.
+
 template <class T>
 Track<T>::Track()
     : particle("proton", 1, SpaceCharge::cst::mproton,
@@ -17,6 +20,9 @@ template <class T>
 Track<T>::Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,
                 FieldSPS<T> &fieldmanager)
     : particle(part), pos0{pos0}, v0{v0}, fieldmanager(fieldmanager) {}
+
+template <class T> Track<T>::~Track() {}
+
 
 template <class T> void Track<T>::track() {
   using namespace boost::numeric::odeint;
@@ -47,7 +53,7 @@ template <class T> void Track<T>::track() {
   };
 
   // Solve ODE
-  integrate_const(stepper, lorentz, init, 0.0, 3e-9, 0.001e-9, observer);
+  integrate_const(stepper, lorentz, init, 0.0, 100e-9, 0.01e-9, observer);
 }
 
 template <class T> void Track<T>::track2(){};
@@ -79,5 +85,8 @@ template <class T> bool Track<T>::filter(const quadv<T> &pos) const {
     return false;
   return true;
 }
+
+template class Track<double>;
+template class Track<float>;
 
 } // namespace SpaceCharge

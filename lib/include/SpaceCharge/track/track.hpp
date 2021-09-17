@@ -47,6 +47,8 @@ public:
   Track(Particle<T> part, quadv<T> pos0, quadv<T> v0,
         FieldSPS<T> &fieldmanager);
 
+  ~Track();
+
   /**
    * \brief Run the ODE tracking.
    **/
@@ -79,9 +81,6 @@ public:
    **/
   size_t size() const;
 };
-
-template class Track<double>;
-template class Track<float>;
 
 } // namespace SpaceCharge
 
