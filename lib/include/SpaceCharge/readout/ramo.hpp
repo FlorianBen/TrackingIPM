@@ -27,6 +27,8 @@ template <typename T> class RamoComputation {
 
 private:
   int size;
+  T time0;
+  T timeF;
   fmap map;
   ftrack track;
   PointCloud<T> pointcloud_pos;
@@ -34,6 +36,7 @@ private:
   state_type2<int> coordinates;
   state_type2<int> res_coordinates;
 
+  quadv<T> vit;
   state_type2<T> tracjectory;
   std::vector<std::vector<T>> current;
 
