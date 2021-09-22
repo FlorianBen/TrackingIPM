@@ -49,13 +49,14 @@ quadv<T> &FieldMap<T>::operator()(size_t x, size_t y, size_t z) {
   return data_[z + x * nz() + y * nx() * nz()];
 }
 
-template <typename T> void FieldMap<T>::addField(FieldSP<T> &field) {
+template <typename T> void FieldMapInterpolate<T>::addField(FieldSP<T> &field) {
   input_fields.push_back(std::move(field));
 }
 
-template <typename T> void FieldMap<T>::computeField() {
+template <typename T> void FieldMapInterpolate<T>::computeField() {
   tbb::parallel_for(
-      tbb::blocked_range3d<int>(0, nz(), 0, ny(), 0, nx()),
+      tbb::blocked_range3d<int>(0, FieldMap<T>::nz(), 0, FieldMap<T>::ny(), 0,
+                                FieldMap<T>::nx()),
       [&](const tbb::blocked_range3d<int> &r) {
         for (int y = r.rows().begin(), y_end = r.rows().end(); y < y_end; y++) {
           for (int x = r.cols().begin(), x_end = r.cols().end(); x < x_end;
@@ -63,10 +64,13 @@ template <typename T> void FieldMap<T>::computeField() {
             for (int z = r.pages().begin(), z_end = r.pages().end(); z < z_end;
                  z++) {
               for (auto &field : input_fields) {
-                quadv<T> pos{qoffset(0), x * qstep(1) + qoffset(1),
-                             y * qstep(2) + qoffset(2),
-                             z * qstep(3) + qoffset(3)};
-                data_[z + x * nz() + y * nx() * nz()] =
+                quadv<T> pos{
+                    FieldMap<T>::qoffset(0),
+                    x * FieldMap<T>::qstep(1) + FieldMap<T>::qoffset(1),
+                    y * FieldMap<T>::qstep(2) + FieldMap<T>::qoffset(2),
+                    z * FieldMap<T>::qstep(3) + FieldMap<T>::qoffset(3)};
+                FieldMap<T>::data_[z + x * FieldMap<T>::nz() +
+                      y * FieldMap<T>::nx() * FieldMap<T>::nz()] =
                     field->EMfieldAt(pos)[0];
               }
             }
@@ -76,5 +80,6 @@ template <typename T> void FieldMap<T>::computeField() {
 }
 
 template class FieldMap<double>;
+template class FieldMapInterpolate<double>;
 
 } // namespace SpaceCharge
