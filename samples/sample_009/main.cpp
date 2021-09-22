@@ -21,6 +21,12 @@ int main(int argc, char *argv[]) {
 
   Logger::Init();
 
+  using namespace hdf5;
+  auto file = file::create("ramo.h5", file::AccessFlags::TRUNCATE);
+  auto root_group = file.root();
+  hdf5::property::LinkCreationList lcpl;
+  hdf5::property::DatasetCreationList dcpl;
+
   SpaceCharge::Particle<double> part_track(
       "electron", 1, 2.0 * SpaceCharge::cst::mproton,
       SpaceCharge::cst::lfactor::beta, 0.5);
@@ -34,16 +40,16 @@ int main(int argc, char *argv[]) {
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
-    p(1) = pos_x(g1);
-    p(2) = pos_y(g1);
-    p(3) = pos_z(g1);
+    p(1) = 0.0; // p(1) = -0.020; // pos_x(g1);
+    p(2) = 0.0; // pos_y(g1);
+    p(3) = 0.0; // pos_z(g1);
   }
-  SpaceCharge::quadv<double> v0{0.0, 0.0, 0.0, 0.0};
+  SpaceCharge::quadv<double> v0{0.0, 0.0, 0.0e5, 0.0};
 
   SpaceCharge::FieldSPS<double> fields =
       std::make_shared<SpaceCharge::EMFieldsManager<double>>();
-  SpaceCharge::quadv<double> Ecst{0.0, 3.0e5, 0.0, 0.0};
-  SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
+  SpaceCharge::quadv<double> Ecst{0.0, 0.0, 3.0e5, 0.0};
+  SpaceCharge::quadv<double> Bcst{0.0, 0.0, 0.0, 0.0};
   SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
   SpaceCharge::FieldSP<double> Fep =
       std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
@@ -70,16 +76,48 @@ int main(int argc, char *argv[]) {
   StripsPlane test(argv[1]);
   quadv<size_t> sizes{0, test.getSizeX(), test.getSizeY(), test.getNbStrips()};
   quadv<double> steps{0, test.getGapX(), test.getGapY(), 1};
-  quadv<double> offset{0, 0.0, 0.0, 0.0};
+  quadv<double> offset{0, test.getGapX() * test.getSizeX() / 2.0, 0.0, 0.0};
 
   upfmap ramofield = std::make_unique<fmap>(sizes, steps, offset, 0);
+  upfmap ramopot = std::make_unique<fmap>(sizes, steps, offset, 0);
 
-  for (auto i = 1; i <= 1 /**test.getNbStrips()*/; i++) {
+  for (auto i = 1; i <= test.getNbStrips(); i++) {
     test.solvePotential(i);
+    test.getPotential(*ramopot, i - 1);
     test.getField(*ramofield, i - 1);
   }
 
+  auto dset_ramo_field =
+      root_group.create_dataset("field", datatype::create<FieldMap<double>>(),
+                                dataspace::create((*ramofield)), dcpl, lcpl);
+  dset_ramo_field.write((*ramofield));
+
+  auto dset_ramo_pot =
+      root_group.create_dataset("pot", datatype::create<FieldMap<double>>(),
+                                dataspace::create((*ramopot)), dcpl, lcpl);
+  dset_ramo_pot.write((*ramopot));
+
   RamoComputation<double> ramo(ramofield, tr);
+
+  auto dset_ramo_coor = root_group.create_dataset(
+      "pos", datatype::create<std::vector<SpaceCharge::quadv<int>>>(),
+      dataspace::create(ramo.getCoordinates()), dcpl, lcpl);
+  dset_ramo_coor.write(ramo.getCoordinates());
+
+  auto dset_ramo_traj = root_group.create_dataset(
+      "traj", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+      dataspace::create(ramo.getTrajectory()), dcpl, lcpl);
+  dset_ramo_traj.write(ramo.getTrajectory());
+
+  auto current_group = root_group.create_group("current");
+  auto i = 0;
+  for (const auto &cv : ramo.getCurrent()) {
+    auto dset_ramo_current =
+        current_group.create_dataset("current_" + std::to_string(i++),
+                                     datatype::create<std::vector<double>>(),
+                                     dataspace::create(cv), dcpl, lcpl);
+    dset_ramo_current.write(cv);
+  }
 
   return 0;
 }
