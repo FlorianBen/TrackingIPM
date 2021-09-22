@@ -154,10 +154,16 @@ void StripsPlane::initMatrix(const int strip_on) {
   auto strip_nb = 0;
   b.setZero();
   mat.setZero();
+  mat.data().squeeze();
   for (auto j = 0; j < ny; j++) {
     for (auto i = 0; i < nx; i++) {
       auto indl = gindex(i, j);
       if (j == 0) {
+        b(indl) = -0;
+        coefficients_t.push_back(Tri(indl, indl, 1));
+        continue;
+      }
+      if (j == (ny - 1)) {
         if (isStrips(i, strip_nb)) {
           if (strip_on == strip_nb) {
             b(indl) = 1;
@@ -170,14 +176,9 @@ void StripsPlane::initMatrix(const int strip_on) {
           b(indl) = 0;
           coefficients_t.push_back(Tri(indl, gindex(i - 1, j), 1.0 / 2));
           coefficients_t.push_back(Tri(indl, gindex(i + 1, j), 1.0 / 2));
-          coefficients_t.push_back(Tri(indl, gindex(i, j + 1), 1));
+          coefficients_t.push_back(Tri(indl, gindex(i, j - 1), 1));
           coefficients_t.push_back(Tri(indl, indl, -2));
         }
-        continue;
-      }
-      if (j == (ny - 1)) {
-        b(indl) = -0;
-        coefficients_t.push_back(Tri(indl, indl, 1));
         continue;
       }
       if (i == 0) {
