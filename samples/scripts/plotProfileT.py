@@ -16,14 +16,14 @@ def main():
 
      
     f = h5py.File('build/tracking.h5', 'r')
-    x_bins = np.linspace(-25, 25, 100)
-    x_fits = np.linspace(-25, 25, 1000)
+    x_bins = np.linspace(-30, 30, 100)
+    x_fits = np.linspace(-30, 30, 1000)
 
 
     countsi = []
     countsf = []
 
-    for i in range(20000):
+    for i in range(10000):
         pos_dset = np.asarray(f['track_' + str(i) + '/pos'][:])
         #ax.plot(pos_dset['x'], pos_dset['y'], pos_dset['z'])
         countsi.append(pos_dset['y'][0])
