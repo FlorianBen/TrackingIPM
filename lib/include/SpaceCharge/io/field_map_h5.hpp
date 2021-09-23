@@ -43,4 +43,29 @@ public:
 } // namespace dataspace
 } // namespace hdf5
 
+namespace SpaceCharge {
+template <typename T>
+FieldMapSP<T> readMapFromFile(const std::string filename) {
+  auto file = hdf5::file::open(filename, hdf5::file::AccessFlags::READONLY);
+  auto root_group = file.root();
+  auto dataset = root_group.get_dataset("pot");
+  hdf5::dataspace::Simple dataspace(dataset.dataspace());
+
+  auto Dimensions = dataspace.current_dimensions();
+
+  quadv<size_t> sizes{0, Dimensions[1], Dimensions[0], Dimensions[2]};
+  quadv<T> steps{0., 0., 0, 0.};
+  quadv<T> offsets{0., 0, 0., 0.};
+  T time = .0;
+
+  FieldMapSP<T> map =
+      std::make_unique<FieldMap<T>>(sizes, steps, offsets, time);
+
+  dataset.read(map->getVector());
+
+  return std::move(map);
+}
+
+} // namespace SpaceCharge
+
 #endif
