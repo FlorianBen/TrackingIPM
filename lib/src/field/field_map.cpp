@@ -40,6 +40,15 @@ template <typename T> const quadv<T> *FieldMap<T>::data() const {
 }
 
 template <typename T>
+const std::vector<quadv<T>> &FieldMap<T>::getVector() const {
+  return data_;
+}
+
+template <typename T> std::vector<quadv<T>> &FieldMap<T>::getVector() {
+  return data_;
+}
+
+template <typename T>
 quadv<T> FieldMap<T>::operator()(size_t x, size_t y, size_t z) const {
   return data_[z + x * nz() + y * nx() * nz()];
 }
@@ -70,7 +79,7 @@ template <typename T> void FieldMapInterpolate<T>::computeField() {
                     y * FieldMap<T>::qstep(2) + FieldMap<T>::qoffset(2),
                     z * FieldMap<T>::qstep(3) + FieldMap<T>::qoffset(3)};
                 FieldMap<T>::data_[z + x * FieldMap<T>::nz() +
-                      y * FieldMap<T>::nx() * FieldMap<T>::nz()] =
+                                   y * FieldMap<T>::nx() * FieldMap<T>::nz()] =
                     field->EMfieldAt(pos)[0];
               }
             }

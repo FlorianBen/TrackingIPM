@@ -91,6 +91,10 @@ public:
    **/
   const quadv<T> *data() const;
 
+  const std::vector<quadv<T>> &getVector() const;
+
+  std::vector<quadv<T>> &getVector();
+
   /**
    * \brief Operator () read overload.
    * \param[in] x Index x.
@@ -110,12 +114,13 @@ public:
   void PrintData() const;
 }; // namespace SpaceCharge
 
+template <typename T> using FieldMapSP = std::unique_ptr<FieldMap<T>>;
+template <typename T> using FieldMapSPS = std::shared_ptr<FieldMap<T>>;
+
 template <typename T> class FieldMapInterpolate : public FieldMap<T> {
 
 private:
   std::vector<FieldSP<T>> input_fields;
-
-
 
 public:
   using FieldMap<T>::FieldMap;
