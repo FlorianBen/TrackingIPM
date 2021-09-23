@@ -90,6 +90,10 @@ int main(int argc, char *argv[]) {
   auto dset_ramo_field =
       root_group.create_dataset("field", datatype::create<FieldMap<double>>(),
                                 dataspace::create((*ramofield)), dcpl, lcpl);
+
+  attribute::Attribute a = dset_ramo_field.attributes.create<quadv<double>>("note");
+  a.write(steps);
+
   dset_ramo_field.write((*ramofield));
 
   auto dset_ramo_pot =

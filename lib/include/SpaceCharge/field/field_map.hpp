@@ -14,13 +14,12 @@ namespace SpaceCharge {
  * \brief FieldMap class describes mapped 3D fields.
  **/
 template <typename T> class FieldMap {
-private:
+protected:
   quadv<size_t> qsize;
   quadv<T> qstep;
   quadv<T> qoffset;
   T time;
   std::vector<quadv<T>> data_;
-  std::vector<FieldSP<T>> input_fields;
 
 public:
   /**
@@ -48,19 +47,19 @@ public:
    * \brief Get the dim size of the fieldmap.
    * \return Dim size.
    **/
-  quadv<size_t> sizes() const;  
+  quadv<size_t> sizes() const;
 
   /**
    * \brief Get the steps of the fieldmap.
    * \return Dim size.
    **/
-  quadv<T> steps() const; 
+  quadv<T> steps() const;
 
   /**
    * \brief Get the offsets of the fieldmap.
    * \return Dim size.
    **/
-  quadv<T> offsets() const; 
+  quadv<T> offsets() const;
 
   /**
    * \brief Get the x size of the fieldmap.
@@ -92,11 +91,9 @@ public:
    **/
   const quadv<T> *data() const;
 
-  /**
-   * \brief Add a field to the fields manager.
-   * \param[in] field Fiel to add.
-   */
-  void addField(FieldSP<T> &field);
+  const std::vector<quadv<T>> &getVector() const;
+
+  std::vector<quadv<T>> &getVector();
 
   /**
    * \brief Operator () read overload.
@@ -114,12 +111,30 @@ public:
    */
   quadv<T> &operator()(size_t x, size_t y, size_t z);
 
+  void PrintData() const;
+}; // namespace SpaceCharge
+
+template <typename T> using FieldMapSP = std::unique_ptr<FieldMap<T>>;
+template <typename T> using FieldMapSPS = std::shared_ptr<FieldMap<T>>;
+
+template <typename T> class FieldMapInterpolate : public FieldMap<T> {
+
+private:
+  std::vector<FieldSP<T>> input_fields;
+
+public:
+  using FieldMap<T>::FieldMap;
+
+  /**
+   * \brief Add a field to the fields manager.
+   * \param[in] field Fiel to add.
+   */
+  void addField(FieldSP<T> &field);
+
   void computeField();
 
   void computePot();
-
-  void PrintData() const;
-}; // namespace SpaceCharge
+};
 
 } // namespace SpaceCharge
 

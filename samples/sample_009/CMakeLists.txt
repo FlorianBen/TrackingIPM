@@ -14,3 +14,13 @@ target_link_libraries(
   PRIVATE SpaceCharge::field
   PRIVATE SpaceCharge::track
   PRIVATE SpaceCharge::readout)
+
+add_executable(sample_009_bis "main_bis.cpp")
+
+target_link_libraries(
+  sample_009_bis
+  PRIVATE SpaceCharge::core
+  PRIVATE SpaceCharge::io
+  PRIVATE SpaceCharge::field
+  PRIVATE SpaceCharge::track
+  PRIVATE SpaceCharge::readout)
