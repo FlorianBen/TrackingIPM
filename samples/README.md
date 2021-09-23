@@ -29,3 +29,4 @@ The potentials and fields are exported in the HDF5 format.
 
 ## Sample 009 (WIP)
 This sample computes the current induced by a particle on several strips. This is a combination of sample 3 and 8.
+There is a second version where the fields and the tracks are loaded from a file instead of being computed.
