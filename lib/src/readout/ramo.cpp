@@ -17,6 +17,8 @@ RamoComputation<T>::RamoComputation(fmap &map, ftrack &track)
   computeCurrent();
 }
 
+template <typename T> RamoComputation<T>::~RamoComputation() { delete index; }
+
 template <typename T>
 const state_type2<T> &RamoComputation<T>::getTrajectory() const {
   return tracjectory;
@@ -86,8 +88,6 @@ template <typename T> void RamoComputation<T>::computeCurrent() {
     current.push_back(temp_current);
   }
 }
-
-template <typename T> RamoComputation<T>::~RamoComputation() {}
 
 template class RamoComputation<double>;
 
