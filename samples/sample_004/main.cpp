@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
   static_cast<SpaceCharge::BunchEMField<double> *>(fields.get())
       ->addBunch(std::move(bunch2));
 
-  auto nx = 1;
-  auto ny = 1;
-  auto nz = 400;
+  size_t nx = 1;
+  size_t ny = 1;
+  size_t nz = 400;
 
   SpaceCharge::quadv<size_t> size{0, nx, ny, nz};
   SpaceCharge::quadv<double> step{0, 100.0e-3 / nx, 100.0e-3 / ny,

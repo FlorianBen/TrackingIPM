@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
   static_cast<SpaceCharge::BunchEMField<double> *>(fields.get())
       ->addBunch(std::move(bunch2));
 
-  auto nx = 400;
-  auto ny = 400;
-  auto nz = 1;
+  size_t nx = 400;
+  size_t ny = 400;
+  size_t nz = 1;
 
   using namespace hdf5;
   auto file = file::create("write_fieldmap.h5", file::AccessFlags::TRUNCATE);
