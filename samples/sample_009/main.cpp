@@ -71,15 +71,17 @@ int main(int argc, char *argv[]) {
                       }
                     });
 
-  uptrack tr = std::make_unique<Track<double>>(tracks.back());
+  TrackSPS<double> tr = std::make_shared<Track<double>>(tracks.back());
 
   StripsPlane test(argv[1]);
   quadv<size_t> sizes{0, test.getSizeX(), test.getSizeY(), test.getNbStrips()};
   quadv<double> steps{0, test.getGapX(), test.getGapY(), 1};
   quadv<double> offset{0, test.getGapX() * test.getSizeX() / 2.0, 0.0, 0.0};
 
-  upfmap ramofield = std::make_unique<fmap>(sizes, steps, offset, 0);
+  upfmap temp = std::make_unique<fmap>(sizes, steps, offset, 0);
   upfmap ramopot = std::make_unique<fmap>(sizes, steps, offset, 0);
+
+  FieldMapSPS<double> ramofield = std::move(temp);
 
   for (auto i = 1; i <= test.getNbStrips(); i++) {
     test.solvePotential(i);
