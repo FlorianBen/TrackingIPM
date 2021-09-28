@@ -29,4 +29,11 @@ public:
 } // namespace dataspace
 } // namespace hdf5
 
+namespace SpaceCharge {
+template <typename T> TrackSP<T> readTrackFromFile(const std::string filename) {
+  TrackSP<T> track = std::make_unique<Track<T>>();
+  return std::move(track);
+}
+} // namespace SpaceCharge
+
 #endif
