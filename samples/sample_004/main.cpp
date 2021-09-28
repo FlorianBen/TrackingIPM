@@ -4,11 +4,11 @@
 #include <tbb/parallel_for.h>
 
 #include "SpaceCharge/core/alogger.hpp"
+#include "SpaceCharge/core/particle.hpp"
 #include "SpaceCharge/field/bunch.hpp"
 #include "SpaceCharge/field/field_map.hpp"
-#include "SpaceCharge/io/field_map_h5.hpp"
 #include "SpaceCharge/field/fields.hpp"
-#include "SpaceCharge/core/particle.hpp"
+#include "SpaceCharge/io/field_map_h5.hpp"
 
 int main(int argc, char *argv[]) {
   /* code */
@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
   static_cast<SpaceCharge::BunchEMField<double> *>(fields.get())
       ->addBunch(std::move(bunch2));
 
-  auto nx = 1;
-  auto ny = 1;
-  auto nz = 400;
+  size_t nx = 1;
+  size_t ny = 1;
+  size_t nz = 400;
 
   SpaceCharge::quadv<size_t> size{0, nx, ny, nz};
   SpaceCharge::quadv<double> step{0, 100.0e-3 / nx, 100.0e-3 / ny,
@@ -39,10 +39,11 @@ int main(int argc, char *argv[]) {
   SpaceCharge::quadv<double> offset{SpaceCharge::cst::sol * 0e-9, -0e-3, -0e-3,
                                     -50e-3};
 
-  SpaceCharge::FieldMap<double> fieldmap(size, step, offset, 3e-12);
-  fieldmap.addField(fields);
-
-  fieldmap.computeField();
+  std::unique_ptr<SpaceCharge::FieldMap<double>> fieldmap =
+      std::make_unique<SpaceCharge::FieldMapInterpolate<double>>(size, step,
+                                                                 offset, 3e-12);
+  static_cast<SpaceCharge::FieldMapInterpolate<double> *>(fieldmap.get())->addField(fields);
+  static_cast<SpaceCharge::FieldMapInterpolate<double> *>(fieldmap.get())->computeField();
 
   using namespace hdf5;
   auto file = file::create("write_fieldmap.h5", file::AccessFlags::TRUNCATE);
@@ -55,8 +56,8 @@ int main(int argc, char *argv[]) {
 
   auto dset = root_group.create_dataset(
       "sequence", datatype::create<SpaceCharge::FieldMap<double>>(),
-      dataspace::create(fieldmap), dcpl, lcpl);
-  dset.write(fieldmap);
+      dataspace::create(*fieldmap), dcpl, lcpl);
+  dset.write(*fieldmap);
 
   return 0;
 }

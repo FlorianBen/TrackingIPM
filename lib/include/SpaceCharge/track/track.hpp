@@ -82,6 +82,9 @@ public:
   size_t size() const;
 };
 
+template <typename T> using TrackSP = std::unique_ptr<Track<T>>;
+template <typename T> using TrackSPS = std::shared_ptr<Track<T>>;
+
 } // namespace SpaceCharge
 
 #endif

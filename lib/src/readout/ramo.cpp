@@ -11,11 +11,13 @@ namespace SpaceCharge {
 
 template <typename T>
 RamoComputation<T>::RamoComputation(fmap &map, ftrack &track)
-    : size(100), map(std::move(map)), track(std::move(track)) {
+    : size(100), map(map), track(track) {
   createPosCloud();
   computeTrajectory();
   computeCurrent();
 }
+
+template <typename T> RamoComputation<T>::~RamoComputation() { delete index; }
 
 template <typename T>
 const state_type2<T> &RamoComputation<T>::getTrajectory() const {
@@ -40,8 +42,6 @@ template <typename T> void RamoComputation<T>::computeTrajectory() {
 
   auto d_max = map->sizes()(2) * map->steps()(2);
   auto t_max = d_max / vit(2);
-
-  SC_INFO("Time : {}", t_max);
 
   for (auto i = 0; i < size; i++) {
     quadv<T> tmp_pos{0.0, (1.0 * i / size) * t_max * vit(1) + pos(1),
@@ -88,8 +88,6 @@ template <typename T> void RamoComputation<T>::computeCurrent() {
     current.push_back(temp_current);
   }
 }
-
-template <typename T> RamoComputation<T>::~RamoComputation() {}
 
 template class RamoComputation<double>;
 

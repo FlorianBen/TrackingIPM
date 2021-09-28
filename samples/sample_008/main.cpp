@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
 
   quadv<size_t> sizes{0, test.getSizeX(), test.getSizeY(), test.getNbStrips()};
   quadv<double> steps{0, test.getGapX(), test.getGapY(), 1};
-  quadv<double> offset{0, 0.0, 0.0, 0.0};
+  //quadv<double> offset{0, 0.0, 0.0, 0.0};
+  quadv<double> offset{0, test.getGapX() * test.getSizeX() / 2.0, 0.0, 0.0};
 
   FieldMap<double> fieldmap(sizes, steps, offset, 0);
   FieldMap<double> potmap(sizes, steps, offset, 0);
@@ -44,6 +45,20 @@ int main(int argc, char *argv[]) {
       "pot", datatype::create<FieldMap<double>>(),
       dataspace::create(potmap), dcpl, lcpl);
   dset2.write(potmap);
+
+  attribute::Attribute att_steps =
+      dset1.attributes.create<quadv<double>>("steps");
+  att_steps.write(fieldmap.steps());
+
+  attribute::Attribute att_offsets =
+      dset1.attributes.create<quadv<double>>("offsets");
+  att_offsets.write(fieldmap.offsets());
+
+  attribute::Attribute att_time =
+      dset1.attributes.create<double>("time");
+  double time = .0;
+  att_time.write(time);
+
 
   return 0;
 }

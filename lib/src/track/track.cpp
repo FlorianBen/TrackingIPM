@@ -9,6 +9,7 @@
 namespace SpaceCharge {
 
 // TODO: Add custom stepper.
+// TODO: Split into a generic Track (without ODE)
 // TODO: Add stepper options or configuration.
 
 template <class T>

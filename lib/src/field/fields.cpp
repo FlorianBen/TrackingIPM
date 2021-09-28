@@ -31,7 +31,9 @@ state_type2<T> ConstantEMField<T>::EMfieldAt(quadv<T> quad) const {
 
 template <class T> CSVFileEMField<T>::CSVFileEMField() {}
 
-template <class T> CSVFileEMField<T>::~CSVFileEMField() {}
+template <class T> CSVFileEMField<T>::~CSVFileEMField() {
+  delete index;
+}
 
 template <class T> quadv<T> CSVFileEMField<T>::EfieldAt(quadv<T> quad) const {
   quadv<T> E;

@@ -15,14 +15,14 @@
 
 int main(int argc, char *argv[]) {
   using namespace SpaceCharge;
+  using namespace hdf5;
   typedef FieldMap<double> fmap;
   typedef std::unique_ptr<fmap> upfmap;
   typedef std::unique_ptr<Track<double>> uptrack;
 
   Logger::Init();
 
-  using namespace hdf5;
-  auto file = file::create("ramo.h5", file::AccessFlags::TRUNCATE);
+  auto file = file::open(argv[1], file::AccessFlags::READONLY);
   auto root_group = file.root();
   hdf5::property::LinkCreationList lcpl;
   hdf5::property::DatasetCreationList dcpl;
@@ -36,13 +36,13 @@ int main(int argc, char *argv[]) {
   std::normal_distribution<double> pos_y(0.0, 3e-3); // pos y distribution
   std::uniform_real_distribution<double> pos_z(-0.012, 0.012);
   std::normal_distribution<double> pos_t(-2e-12, 2e-12);
-  auto nb_part = 1;
+  auto nb_part = 2000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
-    p(1) = 0.0; // p(1) = -0.020; // pos_x(g1);
-    p(2) = 0.0; // pos_y(g1);
-    p(3) = 0.0; // pos_z(g1);
+    p(1) = pos_x(g1);
+    p(2) = pos_y(g1);
+    p(3) = pos_z(g1);
   }
   SpaceCharge::quadv<double> v0{0.0, 0.0, 0.0e5, 0.0};
 
@@ -71,58 +71,43 @@ int main(int argc, char *argv[]) {
                       }
                     });
 
-  TrackSPS<double> tr = std::make_shared<Track<double>>(tracks.back());
+  auto file_out = file::create("current.h5", file::AccessFlags::TRUNCATE);
+  auto root_group_out = file_out.root();
+  auto ramofield = readMapFromFile<double>(root_group, "field");
+  FieldMapSPS<double> shared = std::move(ramofield);
 
-  StripsPlane test(argv[1]);
-  quadv<size_t> sizes{0, test.getSizeX(), test.getSizeY(), test.getNbStrips()};
-  quadv<double> steps{0, test.getGapX(), test.getGapY(), 1};
-  quadv<double> offset{0, test.getGapX() * test.getSizeX() / 2.0, 0.0, 0.0};
+  auto ind_part = 0;
+  for (auto track : tracks) {
+    std::string ind_part_sufix =
+        std::string(5 - std::to_string(ind_part).length(), '0') +
+        std::to_string(ind_part);
+    ind_part++;
 
-  upfmap temp = std::make_unique<fmap>(sizes, steps, offset, 0);
-  upfmap ramopot = std::make_unique<fmap>(sizes, steps, offset, 0);
+    auto part_group = root_group_out.create_group("part_" + ind_part_sufix);
+    TrackSPS<double> tr = std::make_shared<Track<double>>(track);
+    RamoComputation<double> ramo(shared, tr);
 
-  FieldMapSPS<double> ramofield = std::move(temp);
+    auto dset_ramo_coor = part_group.create_dataset(
+        "pos", datatype::create<std::vector<SpaceCharge::quadv<int>>>(),
+        dataspace::create(ramo.getCoordinates()), dcpl, lcpl);
+    dset_ramo_coor.write(ramo.getCoordinates());
 
-  for (auto i = 1; i <= test.getNbStrips(); i++) {
-    test.solvePotential(i);
-    test.getPotential(*ramopot, i - 1);
-    test.getField(*ramofield, i - 1);
-  }
+    auto dset_ramo_traj = part_group.create_dataset(
+        "traj", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+        dataspace::create(ramo.getTrajectory()), dcpl, lcpl);
+    dset_ramo_traj.write(ramo.getTrajectory());
 
-  auto dset_ramo_field =
-      root_group.create_dataset("field", datatype::create<FieldMap<double>>(),
-                                dataspace::create((*ramofield)), dcpl, lcpl);
-
-  attribute::Attribute a = dset_ramo_field.attributes.create<quadv<double>>("note");
-  a.write(steps);
-
-  dset_ramo_field.write((*ramofield));
-
-  auto dset_ramo_pot =
-      root_group.create_dataset("pot", datatype::create<FieldMap<double>>(),
-                                dataspace::create((*ramopot)), dcpl, lcpl);
-  dset_ramo_pot.write((*ramopot));
-
-  RamoComputation<double> ramo(ramofield, tr);
-
-  auto dset_ramo_coor = root_group.create_dataset(
-      "pos", datatype::create<std::vector<SpaceCharge::quadv<int>>>(),
-      dataspace::create(ramo.getCoordinates()), dcpl, lcpl);
-  dset_ramo_coor.write(ramo.getCoordinates());
-
-  auto dset_ramo_traj = root_group.create_dataset(
-      "traj", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
-      dataspace::create(ramo.getTrajectory()), dcpl, lcpl);
-  dset_ramo_traj.write(ramo.getTrajectory());
-
-  auto current_group = root_group.create_group("current");
-  auto i = 0;
-  for (const auto &cv : ramo.getCurrent()) {
-    auto dset_ramo_current =
-        current_group.create_dataset("current_" + std::to_string(i++),
-                                     datatype::create<std::vector<double>>(),
-                                     dataspace::create(cv), dcpl, lcpl);
-    dset_ramo_current.write(cv);
+    auto current_group = part_group.create_group("current");
+    auto i = 0;
+    for (const auto &cv : ramo.getCurrent()) {
+      std::string ind_sufix =
+          std::string(5 - std::to_string(i).length(), '0') + std::to_string(i);
+      i++;
+      auto dset_ramo_current = current_group.create_dataset(
+          "current_" + ind_sufix, datatype::create<std::vector<double>>(),
+          dataspace::create(cv), dcpl, lcpl);
+      dset_ramo_current.write(cv);
+    }
   }
 
   return 0;

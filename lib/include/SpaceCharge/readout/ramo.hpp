@@ -17,8 +17,8 @@ namespace SpaceCharge {
  * @tparam T
  */
 template <typename T> class RamoComputation {
-  typedef std::unique_ptr<FieldMap<T>> fmap;
-  typedef std::unique_ptr<Track<T>> ftrack;
+  typedef std::shared_ptr<FieldMap<T>> fmap;
+  typedef std::shared_ptr<Track<T>> ftrack;
   typedef nanoflann::KDTreeSingleIndexAdaptor<
       nanoflann::L2_Simple_Adaptor<T, PointCloud<T>>, PointCloud<T>, 4 /* dim */
       >

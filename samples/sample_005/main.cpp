@@ -29,9 +29,9 @@ int main(int argc, char *argv[]) {
   static_cast<SpaceCharge::BunchEMField<double> *>(fields.get())
       ->addBunch(std::move(bunch2));
 
-  auto nx = 400;
-  auto ny = 400;
-  auto nz = 1;
+  size_t nx = 400;
+  size_t ny = 400;
+  size_t nz = 1;
 
   using namespace hdf5;
   auto file = file::create("write_fieldmap.h5", file::AccessFlags::TRUNCATE);
@@ -48,15 +48,19 @@ int main(int argc, char *argv[]) {
     SpaceCharge::quadv<double> offset{SpaceCharge::cst::sol * 1e-9 * i, -50e-3,
                                       -50e-3, -0e-3};
 
-    SpaceCharge::FieldMap<double> fieldmap(size, step, offset, 3e-12);
-    fieldmap.addField(fields);
-    fieldmap.computeField();
+    std::unique_ptr<SpaceCharge::FieldMap<double>> fieldmap =
+        std::make_unique<SpaceCharge::FieldMapInterpolate<double>>(
+            size, step, offset, 3e-12);
+    static_cast<SpaceCharge::FieldMapInterpolate<double> *>(fieldmap.get())
+        ->addField(fields);
+    static_cast<SpaceCharge::FieldMapInterpolate<double> *>(fieldmap.get())
+        ->computeField();
 
     auto dset = data_dir.create_dataset(
         "sequence_" + std::to_string(i),
         datatype::create<SpaceCharge::FieldMap<double>>(),
-        dataspace::create(fieldmap), dcpl, lcpl);
-    dset.write(fieldmap);
+        dataspace::create(*fieldmap), dcpl, lcpl);
+    dset.write(*fieldmap);
   }
 
   return 0;
