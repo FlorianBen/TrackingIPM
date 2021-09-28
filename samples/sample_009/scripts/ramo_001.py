@@ -31,7 +31,7 @@ def main():
             dset_curr = np.array(part['current'][curr])
             t = np.linspace(0, 8.343048851293794e-09, 100)
             current[idx, :] = current[idx, :] + dset_curr
-            ax2[idx].plot(t, dset_curr)
+            #ax2[idx].plot(t, dset_curr)
 
     for i in range(0, 18):
         t = np.linspace(0, 8.343048851293794e-09, 100)
