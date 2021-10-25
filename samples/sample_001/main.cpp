@@ -48,7 +48,6 @@ int main(int argc, char *argv[]) {
     timev.at(k) = tt;
     for (auto i = 0; i < nsize; i++) {
       SpaceCharge::BunchEMField<double> fields;
-      SpaceCharge::CSVFileEMField<double> fieldc;
       std::unique_ptr<SpaceCharge::Bunch<double>> bunch2(
           new SpaceCharge::GaussianBunch<double>(
               part, 62.5 * SpaceCharge::uni::milli,
