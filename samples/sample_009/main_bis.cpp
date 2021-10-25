@@ -1,7 +1,11 @@
+#include <atomic>
 #include <iostream>
 #include <random>
+#include <thread>
+#include <utility>
 
 #include <h5cpp/hdf5.hpp>
+#include <tbb/concurrent_queue.h>
 #include <tbb/parallel_for.h>
 
 #include "SpaceCharge/core/alogger.hpp"
@@ -12,6 +16,55 @@
 #include "SpaceCharge/io/field_map_h5.hpp"
 #include "SpaceCharge/readout/ramo.hpp"
 #include "SpaceCharge/readout/strips_plane.hpp"
+
+using ramoSP = std::shared_ptr<SpaceCharge::RamoComputation<double>>;
+tbb::concurrent_bounded_queue<ramoSP> ramos;
+std::atomic_bool prod = true;
+
+void save() {
+  using namespace hdf5;
+  auto file_out = file::create("current.h5", file::AccessFlags::TRUNCATE);
+  auto root_group_out = file_out.root();
+  hdf5::property::LinkCreationList lcpl;
+  hdf5::property::DatasetCreationList dcpl;
+  ramoSP res;
+  auto i = 0;
+  SC_INFO("Saving loop");
+  while (!ramos.empty() || prod) {
+    auto new_data = ramos.try_pop(res);
+    if (new_data) {
+      std::string ind_part_sufix =
+          std::string(5 - std::to_string(i).length(), '0') + std::to_string(i);
+      i++;
+      auto part_group = root_group_out.create_group("part_" + ind_part_sufix);
+      auto dset_ramo_coor = part_group.create_dataset(
+          "pos", datatype::create<std::vector<SpaceCharge::quadv<int>>>(),
+          dataspace::create(res->getCoordinates()), dcpl, lcpl);
+      dset_ramo_coor.write(res->getCoordinates());
+
+      auto dset_ramo_traj = part_group.create_dataset(
+          "traj", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+          dataspace::create(res->getTrajectory()), dcpl, lcpl);
+      dset_ramo_traj.write(res->getTrajectory());
+
+      auto current_group = part_group.create_group("current");
+
+      auto j = 0;
+      for (const auto &cv : res->getCurrent()) {
+        std::string ind_sufix =
+            std::string(5 - std::to_string(j).length(), '0') +
+            std::to_string(j);
+        j++;
+        auto dset_ramo_current = current_group.create_dataset(
+            "current_" + ind_sufix, datatype::create<std::vector<double>>(),
+            dataspace::create(cv), dcpl, lcpl);
+        dset_ramo_current.write(cv);
+      }
+    } else {
+      usleep(50000);
+    }
+  }
+}
 
 int main(int argc, char *argv[]) {
   using namespace SpaceCharge;
@@ -36,11 +89,11 @@ int main(int argc, char *argv[]) {
   std::normal_distribution<double> pos_y(0.0, 3e-3); // pos y distribution
   std::uniform_real_distribution<double> pos_z(-0.012, 0.012);
   std::normal_distribution<double> pos_t(-2e-12, 2e-12);
-  auto nb_part = 2000;
+  auto nb_part = 10000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
-    p(1) = pos_x(g1);
+    p(1) = pos_x(g1)-6e-3;
     p(2) = pos_y(g1);
     p(3) = pos_z(g1);
   }
@@ -71,44 +124,46 @@ int main(int argc, char *argv[]) {
                       }
                     });
 
-  auto file_out = file::create("current.h5", file::AccessFlags::TRUNCATE);
-  auto root_group_out = file_out.root();
+  std::string filename_tracking = "tracking.h5";
+  auto file_tracking =
+      file::create(filename_tracking, hdf5::file::AccessFlags::TRUNCATE);
+
+  auto tr_root_group = file_tracking.root();
+
+  auto ind_tr = 0;
+  for (auto &track : tracks) {
+    std::string ind_tr_sufix =
+        std::string(5 - std::to_string(ind_tr).length(), '0') +
+        std::to_string(ind_tr);
+    ind_tr++;
+    node::Group group =
+        tr_root_group.create_group("track_" + ind_tr_sufix, lcpl);
+    auto dset = group.create_dataset(
+        "pos", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+        dataspace::create(track.getPosVector()), dcpl, lcpl);
+    dset.write(track.getPosVector());
+    auto dset_speed = group.create_dataset(
+        "speed", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+        dataspace::create(track.getSpeedVector()), dcpl, lcpl);
+    dset_speed.write(track.getSpeedVector());
+  }
+
   auto ramofield = readMapFromFile<double>(root_group, "field");
   FieldMapSPS<double> shared = std::move(ramofield);
 
+  std::thread tw_save(save);
+
   auto ind_part = 0;
-  for (auto track : tracks) {
-    std::string ind_part_sufix =
-        std::string(5 - std::to_string(ind_part).length(), '0') +
-        std::to_string(ind_part);
-    ind_part++;
-
-    auto part_group = root_group_out.create_group("part_" + ind_part_sufix);
-    TrackSPS<double> tr = std::make_shared<Track<double>>(track);
-    RamoComputation<double> ramo(shared, tr);
-
-    auto dset_ramo_coor = part_group.create_dataset(
-        "pos", datatype::create<std::vector<SpaceCharge::quadv<int>>>(),
-        dataspace::create(ramo.getCoordinates()), dcpl, lcpl);
-    dset_ramo_coor.write(ramo.getCoordinates());
-
-    auto dset_ramo_traj = part_group.create_dataset(
-        "traj", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
-        dataspace::create(ramo.getTrajectory()), dcpl, lcpl);
-    dset_ramo_traj.write(ramo.getTrajectory());
-
-    auto current_group = part_group.create_group("current");
-    auto i = 0;
-    for (const auto &cv : ramo.getCurrent()) {
-      std::string ind_sufix =
-          std::string(5 - std::to_string(i).length(), '0') + std::to_string(i);
-      i++;
-      auto dset_ramo_current = current_group.create_dataset(
-          "current_" + ind_sufix, datatype::create<std::vector<double>>(),
-          dataspace::create(cv), dcpl, lcpl);
-      dset_ramo_current.write(cv);
-    }
-  }
-
+  tbb::parallel_for(
+      tbb::blocked_range<int>(0, tracks.size()),
+      [&](tbb::blocked_range<int> r) {
+        for (int i = r.begin(); i < r.end(); ++i) {
+          TrackSPS<double> tr = std::make_shared<Track<double>>(tracks[i]);
+          ramoSP ramo = std::make_shared<RamoComputation<double>>(shared, tr);
+          ramos.push(std::move(ramo));
+        }
+      });
+  prod = false;
+  tw_save.join();
   return 0;
 }
