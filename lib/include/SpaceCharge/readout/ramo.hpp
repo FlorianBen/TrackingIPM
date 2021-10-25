@@ -56,11 +56,11 @@ public:
 
   ~RamoComputation();
 
-  const state_type2<int>& getCoordinates() const;
+  const state_type2<int> &getCoordinates() const;
 
-  const state_type2<T>& getTrajectory() const;
+  const state_type2<T> &getTrajectory() const;
 
-  const std::vector<std::vector<T>>& getCurrent() const;
+  const std::vector<std::vector<T>> &getCurrent() const;
 };
 } // namespace SpaceCharge
 #endif
