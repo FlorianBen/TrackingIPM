@@ -51,6 +51,7 @@ private:
   void computeStrips();
 
 public:
+  RamoComputation();
   RamoComputation(fmap &map, ftrack &track);
 
   ~RamoComputation();

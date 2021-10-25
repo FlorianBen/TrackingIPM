@@ -9,6 +9,8 @@ namespace SpaceCharge {
 // TODO: Add more generic version.
 // TODO: Select the particle direction.
 
+template <typename T> RamoComputation<T>::RamoComputation() : index(nullptr) {}
+
 template <typename T>
 RamoComputation<T>::RamoComputation(fmap &map, ftrack &track)
     : size(100), map(map), track(track) {
@@ -17,7 +19,10 @@ RamoComputation<T>::RamoComputation(fmap &map, ftrack &track)
   computeCurrent();
 }
 
-template <typename T> RamoComputation<T>::~RamoComputation() { delete index; }
+template <typename T> RamoComputation<T>::~RamoComputation() {
+  if (index != nullptr)
+    delete index;
+}
 
 template <typename T>
 const state_type2<T> &RamoComputation<T>::getTrajectory() const {
