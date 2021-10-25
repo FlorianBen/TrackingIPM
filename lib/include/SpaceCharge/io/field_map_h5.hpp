@@ -66,7 +66,7 @@ FieldMapSP<T> readMapFromFile(const hdf5::node::Group group, std::string fieldma
 
   dataset.read(map->getVector());
 
-  return std::move(map);
+  return map;
 }
 
 template <typename T> FieldMapSP<T> writeMapFile(const std::string filename) {
@@ -92,7 +92,7 @@ template <typename T> FieldMapSP<T> writeMapFile(const std::string filename) {
 
   dataset.read(map->getVector());
 
-  return std::move(map);
+  return map;
 }
 
 } // namespace SpaceCharge
