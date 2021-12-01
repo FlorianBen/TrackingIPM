@@ -19,10 +19,10 @@ int main(int argc, char *argv[]) {
   // Create two particles. Each can be easily modified by changing the
   // constructor arguments.
   SpaceCharge::Particle<double> part_bunch(
-      "proton", 1, 1.0 * SpaceCharge::cst::melectron,
+      "proton", 1, 1.0 * SpaceCharge::cst::mproton,
       SpaceCharge::cst::lfactor::beta, 0.5);
   SpaceCharge::Particle<double> part_track(
-      "electron", -1, 1.0 * SpaceCharge::cst::melectron,
+      "proton", 1, 1.0 * SpaceCharge::cst::mproton,
       SpaceCharge::cst::lfactor::beta, 0.5);
 
   // Setup the random number generator.
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   // SpaceCharge::quadv<double> Bcst{0.0, 0.0e5, 0.0, 0.0};
   // SpaceCharge::state_type2<double> EMcst{Ecst, Bcst};
   // SpaceCharge::FieldSP<double> Fep =
-  //     std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
+  //    std::make_unique<SpaceCharge::ConstantEMField<double>>(EMcst);
 
   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
       ->addField(Fep);
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   //   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
   //       ->addField(field_bunch);
 
-  auto nb_part = 10000;
+  auto nb_part = 4000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
@@ -104,8 +104,8 @@ int main(int argc, char *argv[]) {
 
   hdf5::property::LinkCreationList lcpl;
   hdf5::property::DatasetCreationList dcpl;
-  dcpl.layout(hdf5::property::DatasetLayout::CHUNKED);
-  dcpl.chunk(hdf5::Dimensions{256});
+  // dcpl.layout(hdf5::property::DatasetLayout::CHUNKED);
+  // dcpl.chunk(hdf5::Dimensions{256});
 
   auto root_group = f.root();
 
