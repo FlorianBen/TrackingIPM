@@ -89,11 +89,11 @@ int main(int argc, char *argv[]) {
   std::normal_distribution<double> pos_y(0.0, 3e-3); // pos y distribution
   std::uniform_real_distribution<double> pos_z(-0.012, 0.012);
   std::normal_distribution<double> pos_t(-2e-12, 2e-12);
-  auto nb_part = 10000;
+  auto nb_part = 1000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
-    p(1) = pos_x(g1)-6e-3;
+    p(1) = pos_x(g1);
     p(2) = pos_y(g1);
     p(3) = pos_z(g1);
   }

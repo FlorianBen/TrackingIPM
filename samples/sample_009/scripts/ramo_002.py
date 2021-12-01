@@ -24,7 +24,7 @@ def main():
     countsi = []
     countsf = []
 
-    for i in range(10000):
+    for i in range(1000):
         pos_dset = np.asarray(f['track_' + str(i).zfill(5) + '/pos'][:])
         #ax.plot(pos_dset['x'], pos_dset['y'], pos_dset['z'])
         countsi.append(pos_dset['x'][0])
