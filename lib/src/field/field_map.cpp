@@ -78,9 +78,13 @@ template <typename T> void FieldMapInterpolate<T>::computeField() {
                     x * FieldMap<T>::qstep(1) + FieldMap<T>::qoffset(1),
                     y * FieldMap<T>::qstep(2) + FieldMap<T>::qoffset(2),
                     z * FieldMap<T>::qstep(3) + FieldMap<T>::qoffset(3)};
+                auto res = field->EMfieldAt(pos);
                 FieldMap<T>::data_[z + x * FieldMap<T>::nz() +
                                    y * FieldMap<T>::nx() * FieldMap<T>::nz()] =
-                    field->EMfieldAt(pos)[0];
+                    res[0];
+                // FieldMap<T>::data_B[z + x * FieldMap<T>::nz() +
+                //                     y * FieldMap<T>::nx() * FieldMap<T>::nz()] =
+                //     res[1];
               }
             }
           }

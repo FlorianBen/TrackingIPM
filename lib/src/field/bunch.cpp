@@ -3,6 +3,9 @@
 #include "SpaceCharge/core/alogger.hpp"
 #include "SpaceCharge/field/bunch.hpp"
 
+
+// TODO: Add sigma parameter to the GaussianBunch constructor.
+
 namespace SpaceCharge {
 
 // template <class T>
