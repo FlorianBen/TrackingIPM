@@ -52,7 +52,7 @@ if(("${ENABLE_COVERAGE}") AND ("${CMAKE_BUILD_TYPE}" EQUAL "DEBUG"))
       "/local/home/*/Libs/*")
   append_coverage_compiler_flags()
 else()
-  message(WARNING "Code coverage disabled with Release builds.")
+  message(INFO "Code coverage disabled with Release builds.")
 endif()
 
 option(BUILD_BENCHS "Build the google benchmarks" OFF)
