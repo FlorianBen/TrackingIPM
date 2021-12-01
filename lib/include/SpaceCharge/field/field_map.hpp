@@ -20,6 +20,7 @@ protected:
   quadv<T> qoffset;
   T time;
   std::vector<quadv<T>> data_;
+  //std::vector<quadv<T>> data_B;
 
 public:
   /**

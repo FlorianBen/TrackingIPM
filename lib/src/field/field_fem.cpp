@@ -155,7 +155,7 @@ template <int dim, class T> void FEMBunch<dim, T>::assemble_system() {
   Eigen::Matrix<double, dim, 1> center;
   center << .0, .0;
   Eigen::Matrix<double, dim, dim> covar;
-  covar << .001, .0, .0, .001;
+  covar << .001, .0005, .0005, .001;
 
   RightHandSide<dim> right_hand_side(center, covar);
   FEValues<dim> fe_values(fe, quadrature_formula,
