@@ -26,3 +26,9 @@ add_custom_command(
   POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/strips_gaus.txt
           ${CMAKE_CURRENT_BINARY_DIR}/strips_gaus.txt)
+
+add_custom_command(
+  TARGET sample_008
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/sonate.txt
+          ${CMAKE_CURRENT_BINARY_DIR}/sonate.txt)
