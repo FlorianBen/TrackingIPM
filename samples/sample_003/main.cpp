@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
       std::make_shared<SpaceCharge::EMFieldsManager<double>>();
 
   SpaceCharge::quadv<double> offset;
-  offset << 0.0, 0.0, 0.0, 0.206;
+  offset << 0.0, 0.0, 0.0, 0.247;
 
   SpaceCharge::FieldSP<double> Fep =
       std::make_unique<SpaceCharge::CSVFileEMField<double>>();
@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   //   static_cast<SpaceCharge::EMFieldsManager<double> *>(fields.get())
   //       ->addField(field_bunch);
 
-  auto nb_part = 4000;
+  auto nb_part = 50000;
   tbb::concurrent_vector<SpaceCharge::quadv<double>> pos(nb_part);
   for (auto &p : pos) {
     p(0) = 0.0;
@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
                         SpaceCharge::Track<double> track(part_track, pos[i], v0,
                                                          fields);
                         track.track();
-                        tracks.push_back(track);
+                        tracks.push_back(std::move(track));
                       }
                     });
 
@@ -111,18 +111,24 @@ int main(int argc, char *argv[]) {
 
   using namespace hdf5;
 
+  node::Group group = root_group.create_group("track", lcpl);
+
+  std::vector<SpaceCharge::quadv<double>> posi;
+  std::vector<SpaceCharge::quadv<double>> posf;
+
   for (auto &track : tracks) {
-    node::Group group =
-        root_group.create_group("track_" + std::to_string(i++), lcpl);
-    auto dset = group.create_dataset(
-        "pos", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
-        dataspace::create(track.getPosVector()), dcpl, lcpl);
-    dset.write(track.getPosVector());
-    auto dset_speed = group.create_dataset(
-        "speed", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
-        dataspace::create(track.getSpeedVector()), dcpl, lcpl);
-    dset_speed.write(track.getSpeedVector());
+    posi.push_back(*std::begin(track.getPosVector()));
+    posf.push_back(*std::rbegin(track.getPosVector()));
   }
+
+  auto dset1 = group.create_dataset(
+      "posi", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+      dataspace::create(posi), dcpl, lcpl);
+  auto dset2 = group.create_dataset(
+      "posf", datatype::create<std::vector<SpaceCharge::quadv<double>>>(),
+      dataspace::create(posf), dcpl, lcpl);
+  dset1.write(posi);
+  dset2.write(posf);
 
   SC_INFO("Saving done");
 

@@ -11,13 +11,11 @@ def main():
     :return:
     """
     f = h5py.File('build/tracking.h5', 'r')
-    fig = plt.figure()
-
 
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
 
-    for i in range(10):
+    for i in range(100):
         pos_dset = np.asarray(f['track_' + str(i) + '/pos'][:])
         ax.plot(pos_dset['x'], pos_dset['y'], pos_dset['z'])
 
@@ -30,6 +28,8 @@ def main():
     ax.set_xlim3d(-0.06, 0.06)
     ax.set_ylim3d(-0.06, 0.06)
     ax.set_zlim3d(-0.06, 0.06)
+
+    
     plt.show()
 
 

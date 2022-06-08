@@ -34,7 +34,6 @@ int main(int argc, char *argv[]) {
   quadv offset;
   offset << 0.0, 0.0, 0.0, 0.206;
   field.loadEfield(argv[1], offset, 1.0);
-  field.create_Eindex(20);
 
   quadv Bfield;
   Bfield << 0.0, 0.0, 0.0, 0.0;

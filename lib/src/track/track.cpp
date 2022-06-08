@@ -55,6 +55,21 @@ template <class T> void Track<T>::track() {
 
   // Solve ODE
   integrate_const(stepper, lorentz, init, 0.0, 100e-9, 0.01e-9, observer);
+
+  auto reduce = true;
+  if(reduce) {
+    auto posi_red = *std::begin(pos);
+    auto posf_red = *std::rbegin(pos);
+    auto speedi_red = *std::begin(speed);
+    auto speedf_red = *std::rbegin(speed);
+    pos.clear();
+    pos.push_back(posi_red);
+    pos.push_back(posf_red);
+    speed.clear();
+    speed.push_back(speedi_red);
+    speed.push_back(speedf_red);
+    
+  }
 }
 
 template <class T> void Track<T>::track2(){};
